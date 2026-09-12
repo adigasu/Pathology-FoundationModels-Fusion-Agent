@@ -1,0 +1,35 @@
+# Foundation Model Embeddings Configuration
+models:
+  uni2:
+    name: "MahmoodLab/UNI2-h"
+    architecture: "ViT-Giant/14"
+    dimension: 1536
+    weights_access: "Hugging Face (gated)"
+    mean_slide_file: "artifacts/features/uni2_slide_mean.pt"
+    max_slide_file: "artifacts/features/uni2_slide_max.pt"
+    tiles_fp16_file: "artifacts/features/uni2_tiles_fp16.pt"
+
+  virchow2:
+    name: "paige-ai/Virchow2"
+    architecture: "ViT-Giant/14"
+    dimension: 2560
+    weights_access: "Hugging Face (gated)"
+    mean_slide_file: "artifacts/features/virchow2_slide_mean.pt"
+    max_slide_file: "artifacts/features/virchow2_slide_max.pt"
+    tiles_fp16_file: "artifacts/features/virchow2_tiles_fp16.pt"
+
+  gigapath:
+    name: "prov-gigapath/prov-gigapath"
+    architecture: "ViT-Giant/14"
+    dimension: 1536
+    weights_access: "Hugging Face (instant)"
+    mean_slide_file: "artifacts/features/gigapath_slide_mean.pt"
+    max_slide_file: "artifacts/features/gigapath_slide_max.pt"
+    tiles_fp16_file: "artifacts/features/gigapath_tiles_fp16.pt"
+
+pooling:
+  champion_method: "concat"  # [mean; max] concatenated pooling
+  available_methods:
+    - "mean"
+    - "max"
+    - "concat"\n

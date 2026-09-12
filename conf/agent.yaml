@@ -1,0 +1,22 @@
+# Autonomous Search Agent Configuration
+search:
+  max_trials: 25
+  patience: 5
+  k_se: 0.5  # Paired standard error guardrail threshold (>= 1.0 * SE) or (>= 0.5 * SE)  
+  cv_metric: "macro_auroc"
+  cv_folds: 5
+
+stages:
+  stage1:
+    name: "Broad Exploration"
+    trials: "T01-T12"
+    coverage: ["early", "late", "intermediate", "triad_ablation", "metadata_ablation"]
+  stage2:
+    name: "Architectural Exploitation"
+    trials: "T13-T25"
+    priority: "Representation capacity (concat pooling) -> Soft voting calibration -> Regularization sweeps"
+
+evaluation:
+  bootstrap_samples: 1000
+  confidence_interval: 0.95
+  touch_test_set_once: true

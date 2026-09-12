@@ -1,0 +1,27 @@
+# Data and Split Configuration
+dataset:
+  source: "kmmuleelab/Lung_Pathology_Image_JPG"
+  metadata_path: "artifacts/curated_patients.csv"
+  raw_clwd_path: "artifacts/CLWD.csv"
+  splits_dir: "artifacts/splits"
+  features_dir: "artifacts/features"
+
+splits:
+  primary_seed: 42
+  eval_seeds: [42, 1337, 2026]
+  test_ratio: 0.20
+  val_ratio: 0.20
+  cv_folds: 5
+  group_column: "SampleNumber"
+  target_column: "Tumor Subtype"
+
+classes:
+  names:
+    - "In situ"
+    - "Lepidic"
+    - "Acinar"
+    - "Papillary"
+    - "Micropapillary"
+    - "Solid"
+    - "Invasive mucinous"
+  num_classes: 7\n

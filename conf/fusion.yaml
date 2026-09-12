@@ -1,0 +1,30 @@
+# Fusion Architectures Configuration
+early_fusion:
+  strategies:
+    - "concat"
+    - "concat_l2"
+    - "concat_pca"
+  pca_variance_threshold: 0.95
+  l2_normalization: true
+
+late_fusion:
+  strategies:
+    - "uniform_voting"
+    - "temperature_soft_voting"
+    - "simplex_weighted_voting"
+    - "oof_stacking"
+  temperature_tau: 1.5
+  stacking_meta_learner: "LogisticRegression(C=1.0)"
+
+intermediate_fusion:
+  strategies:
+    - "gated_fusion"
+    - "stream_abmil"
+  hidden_dim: 256
+  dropout: 0.25
+
+metadata_conditioning:
+  features: ["Age", "Sex"]
+  age_standardization: "train_fold_only"
+  sex_encoding: "binary (0=Female, 1=Male)"
+  gamma_meta_scaling: 1.0\n

@@ -1,0 +1,19 @@
+# Master Pipeline Configuration
+defaults:
+  - data: data
+  - embeddings: embeddings
+  - fusion: fusion
+  - agent: agent
+
+project:
+  name: "Pathology-FoundationModels-Fusion-Agent"
+  version: "1.0.0"
+  target_task: "Histologic growth pattern classification (7 classes)"
+  metric: "multiclass_macro_auroc"
+  secondary_metric: "balanced_accuracy"
+
+hardware:
+  num_threads: 4
+  device: "cuda"
+  seed: 42
+  eval_seeds: [42, 1337, 2026]\n
