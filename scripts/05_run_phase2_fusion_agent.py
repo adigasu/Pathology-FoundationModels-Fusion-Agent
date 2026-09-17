@@ -145,7 +145,7 @@ def evaluate_champion_on_test(
     )
 
 
-def run_pipeline_for_seed(seed: int, k_se: float = 0.5, patience: int = 5, n_bootstrap: int = 1000, agent_version: str = "v3", output_dir: str = "artifacts") -> Dict[str, Any]:
+def run_pipeline_for_seed(seed: int, k_se: float = 1.0, patience: int = 5, n_bootstrap: int = 1000, agent_version: str = "v3", output_dir: str = "artifacts") -> Dict[str, Any]:
     print("\n" + "#" * 80, flush=True)
     print(f"### EXECUTING PHASE 2 PIPELINE FOR SEED {seed} (Agent: {agent_version.upper()})", flush=True)
     print("#" * 80 + "\n", flush=True)
@@ -337,7 +337,7 @@ def main():
     parser.add_argument("--seed", type=int, default=42, help="Primary random seed (default: 42)")
     parser.add_argument("--all-seeds", action="store_true", help="Run full multi-seed evaluation across seeds 42, 1337, 2026")
     parser.add_argument("--agent-version", type=str, default="v3", choices=["v1", "v2", "v3", "v4", "llm"], help="Agent search version: v1 (sequential), v2 (principled exploitation), v3 (3-stage hierarchical stability), v4/llm (LLM-powered autonomous fusion agent)")
-    parser.add_argument("--k-se", type=float, default=0.5, help="SE Guardrail threshold factor (default: 0.5)")
+    parser.add_argument("--k-se", type=float, default=1.0, help="SE Guardrail threshold factor (default: 1.0)")
     parser.add_argument("--patience", type=int, default=5, help="Max consecutive failures before early stopping (default: 5)")
     parser.add_argument("--n-bootstrap", type=int, default=1000, help="Number of bootstrap resamples (default: 1000)")
     parser.add_argument("--output-dir", type=str, default=None, help="Output directory for results")

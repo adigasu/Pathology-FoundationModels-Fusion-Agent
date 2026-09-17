@@ -93,7 +93,7 @@ class HierarchicalStabilityAgent:
                Freezes the global Champion.
     - Final Evaluation: One-time untouched test evaluation on held-out test cohort with 1,000 bootstrap CIs.
     """
-    def __init__(self, seed: int = 42, k_se: float = 0.5, stability_seeds: List[int] = (42, 1337, 2026)):
+    def __init__(self, seed: int = 42, k_se: float = 1.0, stability_seeds: List[int] = (42, 1337, 2026)):
         self.seed = seed
         self.k_se = k_se
         self.stability_seeds = list(stability_seeds)

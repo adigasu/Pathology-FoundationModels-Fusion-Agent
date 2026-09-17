@@ -84,7 +84,7 @@ class AutonomousFusionAgent:
     Autonomous deterministic search agent governed by a hard 25-trial budget,
     paired standard error guardrails, touch-test-set-once rule, and zero leakage.
     """
-    def __init__(self, seed: int = 42, k_se: float = 0.5, max_consecutive_failures: int = 5):
+    def __init__(self, seed: int = 42, k_se: float = 1.0, max_consecutive_failures: int = 5):
         self.seed = seed
         self.k_se = k_se
         self.max_consecutive_failures = max_consecutive_failures

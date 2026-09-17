@@ -2,7 +2,7 @@
 search:
   max_trials: 25
   patience: 5
-  k_se: 0.5  # Paired standard error guardrail threshold (>= 1.0 * SE) or (>= 0.5 * SE)  
+  k_se: 1.0  # Paired 1.0-SE guardrail threshold
   cv_metric: "macro_auroc"
   cv_folds: 5
 

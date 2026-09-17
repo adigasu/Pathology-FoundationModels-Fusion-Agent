@@ -297,7 +297,7 @@ class LLMFusionAgent:
     def __init__(
         self,
         seed: int = 42,
-        k_se: float = 0.5,
+        k_se: float = 1.0,
         max_consecutive_failures: int = 5,
         max_trials: int = 25
     ):
