@@ -145,7 +145,7 @@ def evaluate_champion_on_test(
     )
 
 
-def run_pipeline_for_seed(seed: int, k_se: float = 0.5, patience: int = 5, n_bootstrap: int = 1000, agent_version: str = "v3") -> Dict[str, Any]:
+def run_pipeline_for_seed(seed: int, k_se: float = 0.5, patience: int = 5, n_bootstrap: int = 1000, agent_version: str = "v3", output_dir: str = "artifacts") -> Dict[str, Any]:
     print("\n" + "#" * 80, flush=True)
     print(f"### EXECUTING PHASE 2 PIPELINE FOR SEED {seed} (Agent: {agent_version.upper()})", flush=True)
     print("#" * 80 + "\n", flush=True)
@@ -160,13 +160,13 @@ def run_pipeline_for_seed(seed: int, k_se: float = 0.5, patience: int = 5, n_boo
     
     # Save search logs
     agent.save_logs(
-        json_path=f"artifacts/agent_decision_log_seed_{seed}.json",
-        md_path=f"artifacts/agent_search_summary_seed_{seed}.md"
+        json_path=os.path.join(output_dir, f"agent_decision_log_seed_{seed}.json"),
+        md_path=os.path.join(output_dir, f"agent_search_summary_seed_{seed}.md")
     )
     if seed == 42:
         agent.save_logs(
-            json_path="artifacts/agent_decision_log.json",
-            md_path="artifacts/agent_search_summary.md"
+            json_path=os.path.join(output_dir, "agent_decision_log.json"),
+            md_path=os.path.join(output_dir, "agent_search_summary.md")
         )
         
     # 2. Load dataset for champion (using champion pooling & gamma_meta)
@@ -274,15 +274,16 @@ def run_pipeline_for_seed(seed: int, k_se: float = 0.5, patience: int = 5, n_boo
         "champion_config": champion["config"],
         "results": results
     }
-    with open(f"artifacts/phase2_results_seed_{seed}.json", "w") as f:
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, f"phase2_results_seed_{seed}.json"), "w") as f:
         json.dump(seed_summary, f, indent=2)
-    with open(f"artifacts/phase2_comparison_table_seed_{seed}.md", "w") as f:
+    with open(os.path.join(output_dir, f"phase2_comparison_table_seed_{seed}.md"), "w") as f:
         f.write(f"# Phase 2 Model Comparison Table (Seed {seed})\n\n" + table_md + "\n")
         
     return seed_summary
 
 
-def aggregate_multi_seed_results(seed_results: List[Dict[str, Any]]):
+def aggregate_multi_seed_results(seed_results: List[Dict[str, Any]], output_dir: str = "artifacts"):
     print("\n" + "=" * 80, flush=True)
     print("AGGREGATING MULTI-SEED EVALUATION ACROSS SEEDS (42, 1337, 2026)", flush=True)
     print("=" * 80 + "\n", flush=True)
@@ -323,11 +324,12 @@ def aggregate_multi_seed_results(seed_results: List[Dict[str, Any]]):
     print(table_md, flush=True)
     print("\n" + "=" * 80 + "\n", flush=True)
     
-    with open("artifacts/phase2_multi_seed_comparison.md", "w") as f:
+    os.makedirs(output_dir, exist_ok=True)
+    with open(os.path.join(output_dir, "phase2_multi_seed_comparison.md"), "w") as f:
         f.write("# Phase 2 Multi-Seed Repeatability Summary (Seeds 42, 1337, 2026)\n\n" + table_md + "\n")
-    with open("artifacts/phase2_multi_seed_comparison.json", "w") as f:
+    with open(os.path.join(output_dir, "phase2_multi_seed_comparison.json"), "w") as f:
         json.dump(summary_data, f, indent=2)
-    print("Multi-seed summary saved to artifacts/phase2_multi_seed_comparison.md and .json", flush=True)
+    print(f"Multi-seed summary saved to {output_dir}/phase2_multi_seed_comparison.md and .json", flush=True)
 
 
 def main():
@@ -338,18 +340,59 @@ def main():
     parser.add_argument("--k-se", type=float, default=0.5, help="SE Guardrail threshold factor (default: 0.5)")
     parser.add_argument("--patience", type=int, default=5, help="Max consecutive failures before early stopping (default: 5)")
     parser.add_argument("--n-bootstrap", type=int, default=1000, help="Number of bootstrap resamples (default: 1000)")
+    parser.add_argument("--output-dir", type=str, default=None, help="Output directory for results")
+    parser.add_argument("--exp-name", type=str, default=None, help="Experiment name (saved under artifacts/results/<exp_name>)")
     args = parser.parse_args()
     
+    # Determine destination directory
+    if args.output_dir is not None:
+        output_dir = args.output_dir
+    elif args.exp_name is not None:
+        output_dir = os.path.join("artifacts", "results", args.exp_name)
+    else:
+        output_dir = "artifacts"
+
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Save experiment configuration record
+    try:
+        import subprocess
+        git_hash = subprocess.check_output(["git", "rev-parse", "--short", "HEAD"], text=True).strip()
+    except Exception:
+        git_hash = "unknown"
+
+    config_record = {
+        "experiment_name": args.exp_name or os.path.basename(output_dir),
+        "output_dir": output_dir,
+        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "git_commit": git_hash,
+        "agent_version": args.agent_version,
+        "k_se": args.k_se,
+        "patience": args.patience,
+        "n_bootstrap": args.n_bootstrap,
+        "all_seeds": args.all_seeds,
+        "seeds": [42, 1337, 2026] if args.all_seeds else [args.seed]
+    }
+    with open(os.path.join(output_dir, "config.json"), "w") as f:
+        json.dump(config_record, f, indent=2)
+    try:
+        import yaml
+        with open(os.path.join(output_dir, "config.yaml"), "w") as f:
+            yaml.dump(config_record, f, default_flow_style=False)
+    except Exception:
+        pass
+    print(f"Configuration metadata saved to {output_dir}/config.yaml and config.json", flush=True)
+
     t_start = time.time()
     if args.all_seeds:
         seed_list = [42, 1337, 2026]
         all_res = []
         for s in seed_list:
-            res = run_pipeline_for_seed(seed=s, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version)
+            res = run_pipeline_for_seed(seed=s, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version, output_dir=output_dir)
             all_res.append(res)
-        aggregate_multi_seed_results(all_res)
+        aggregate_multi_seed_results(all_res, output_dir=output_dir)
     else:
-        run_pipeline_for_seed(seed=args.seed, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version)
+        run_pipeline_for_seed(seed=args.seed, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version, output_dir=output_dir)
         
     print(f"\nPhase 2 execution finished in {time.time() - t_start:.2f} seconds.", flush=True)
 
