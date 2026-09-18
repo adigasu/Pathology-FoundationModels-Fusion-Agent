@@ -39,12 +39,53 @@ def load_cached_embeddings(
             feat_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
         elif pooling == "max":
             feat_dict = torch.load(max_path, map_location="cpu", weights_only=False)
-        elif pooling in ("concat", "mean_max"):
+        elif pooling in ("concat", "mean_max", "concat_mean_max", "concat_max_mean"):
             mean_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
             max_dict = torch.load(max_path, map_location="cpu", weights_only=False)
             feat_dict = {
                 wsi_id: torch.cat([mean_dict[wsi_id].float(), max_dict[wsi_id].float()], dim=-1)
                 for wsi_id in mean_dict
+            }
+        elif pooling in ("mean_top10_max", "concat_top10", "top10_concat"):
+            mean_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
+            top10_path = os.path.join(feature_dir, f"{model_name}_slide_top10.pt")
+            top10_dict = torch.load(top10_path, map_location="cpu", weights_only=False)
+            max_dict = torch.load(max_path, map_location="cpu", weights_only=False)
+            feat_dict = {
+                wsi_id: torch.cat([mean_dict[wsi_id].float(), top10_dict[wsi_id].float(), max_dict[wsi_id].float()], dim=-1)
+                for wsi_id in mean_dict
+            }
+        elif pooling in ("mean_top10", "concat_mean_top10"):
+            mean_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
+            top10_path = os.path.join(feature_dir, f"{model_name}_slide_top10.pt")
+            top10_dict = torch.load(top10_path, map_location="cpu", weights_only=False)
+            feat_dict = {
+                wsi_id: torch.cat([mean_dict[wsi_id].float(), top10_dict[wsi_id].float()], dim=-1)
+                for wsi_id in mean_dict
+            }
+        elif pooling in ("mean_top5", "concat_mean_top5"):
+            mean_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
+            top5_path = os.path.join(feature_dir, f"{model_name}_slide_top5.pt")
+            top5_dict = torch.load(top5_path, map_location="cpu", weights_only=False)
+            feat_dict = {
+                wsi_id: torch.cat([mean_dict[wsi_id].float(), top5_dict[wsi_id].float()], dim=-1)
+                for wsi_id in mean_dict
+            }
+        elif pooling in ("mean_top20", "concat_mean_top20"):
+            mean_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
+            top20_path = os.path.join(feature_dir, f"{model_name}_slide_top20.pt")
+            top20_dict = torch.load(top20_path, map_location="cpu", weights_only=False)
+            feat_dict = {
+                wsi_id: torch.cat([mean_dict[wsi_id].float(), top20_dict[wsi_id].float()], dim=-1)
+                for wsi_id in mean_dict
+            }
+        elif pooling in ("max_top20", "concat_max_top20", "top20_max"):
+            max_dict = torch.load(max_path, map_location="cpu", weights_only=False)
+            top20_path = os.path.join(feature_dir, f"{model_name}_slide_top20.pt")
+            top20_dict = torch.load(top20_path, map_location="cpu", weights_only=False)
+            feat_dict = {
+                wsi_id: torch.cat([max_dict[wsi_id].float(), top20_dict[wsi_id].float()], dim=-1)
+                for wsi_id in max_dict
             }
         elif pooling in ("top5", "top_5"):
             p_path = os.path.join(feature_dir, f"{model_name}_slide_top5.pt")
@@ -55,6 +96,26 @@ def load_cached_embeddings(
         elif pooling in ("top20", "top_20"):
             p_path = os.path.join(feature_dir, f"{model_name}_slide_top20.pt")
             feat_dict = torch.load(p_path, map_location="cpu", weights_only=False)
+        elif pooling in ("std", "variance"):
+            s_path = os.path.join(feature_dir, f"{model_name}_slide_std.pt")
+            feat_dict = torch.load(s_path, map_location="cpu", weights_only=False)
+        elif pooling in ("mean_std", "concat_mean_std"):
+            mean_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
+            std_path = os.path.join(feature_dir, f"{model_name}_slide_std.pt")
+            std_dict = torch.load(std_path, map_location="cpu", weights_only=False)
+            feat_dict = {
+                wsi_id: torch.cat([mean_dict[wsi_id].float(), std_dict[wsi_id].float()], dim=-1)
+                for wsi_id in mean_dict
+            }
+        elif pooling in ("mean_max_std", "concat_mean_max_std"):
+            mean_dict = torch.load(mean_path, map_location="cpu", weights_only=False)
+            max_dict = torch.load(max_path, map_location="cpu", weights_only=False)
+            std_path = os.path.join(feature_dir, f"{model_name}_slide_std.pt")
+            std_dict = torch.load(std_path, map_location="cpu", weights_only=False)
+            feat_dict = {
+                wsi_id: torch.cat([mean_dict[wsi_id].float(), max_dict[wsi_id].float(), std_dict[wsi_id].float()], dim=-1)
+                for wsi_id in mean_dict
+            }
         else:
             raise ValueError(f"Unknown pooling mode: {pooling}")
         embeddings[model_name] = feat_dict
