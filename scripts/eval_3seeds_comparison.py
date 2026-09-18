@@ -152,7 +152,7 @@ def print_table(title: str, rows: List[str], all_results: Dict[int, Any], seeds:
         base_baccs = [all_results[s][r]["base"]["balanced_acc"] for s in seeds]
         adj_baccs = [all_results[s][r]["adj"]["balanced_acc"] for s in seeds]
         
-        m_auc, s_auc = np.mean(aurocs), np.std(aurocs)
+        m_auc, s_auc = np.mean(aurocs), np.std(aurocs, ddof=1)
         m_base_b, m_adj_b = np.mean(base_baccs), np.mean(adj_baccs)
         
         auc_str = f"{m_auc:.4f} ± {s_auc:.4f}"

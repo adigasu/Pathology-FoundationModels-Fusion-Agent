@@ -127,9 +127,12 @@ def run_multi_seed_evaluations(df: pd.DataFrame, matrices: Dict[str, np.ndarray]
         counts = np.bincount(y_tv, minlength=n_classes)
         priors = counts.astype(np.float64) / len(y_tv)
         
-        # Clinical Metadata
-        age_mean, age_std = df.loc[tv_mask, "Age"].mean(), df.loc[tv_mask, "Age"].std()
-        norm_age = ((df["Age"].values - age_mean) / (age_std + 1e-8)).astype(np.float32)
+        # Clinical Metadata: Strict Train-only standardization (n=142) for zero leakage
+        tr_mask = (split_col == 'train')
+        age_mean, age_std = float(df.loc[tr_mask, "Age"].mean()), float(df.loc[tr_mask, "Age"].std())
+        if age_std < 1e-6:
+            age_std = 1.0
+        norm_age = ((df["Age"].values - age_mean) / age_std).astype(np.float32)
         sex_binary = np.where(df["Sex"].values == "Female", 1.0, 0.0).astype(np.float32)
         meta_all = np.column_stack([norm_age, sex_binary])
         meta_tv, meta_te = meta_all[tv_mask], meta_all[te_mask]
@@ -466,14 +469,14 @@ def save_per_class_table(per_class_scores: Dict[str, Dict[str, List[float]]], ma
         row_str = f"| **{c}** |"
         for m in models:
             scores = per_class_scores[m][c]
-            m_val, s_val = np.mean(scores), np.std(scores)
+            m_val, s_val = np.mean(scores), np.std(scores, ddof=1)
             fmt = "**" if "Quad" in m else ""
             row_str += f" {fmt}{m_val:.4f} ± {s_val:.4f}{fmt} |"
         rows.append(row_str)
         
     macro_row = "| **Macro AUROC** |"
     for m in models:
-        m_val, s_val = np.mean(macro_aurocs[m]), np.std(macro_aurocs[m])
+        m_val, s_val = np.mean(macro_aurocs[m]), np.std(macro_aurocs[m], ddof=1)
         fmt = "**" if "Quad" in m else ""
         macro_row += f" {fmt}{m_val:.4f} ± {s_val:.4f}{fmt} |"
     rows.append(macro_row)
