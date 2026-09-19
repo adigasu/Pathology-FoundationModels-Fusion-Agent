@@ -4,6 +4,12 @@ This guide provides end-to-end instructions for reproducing the entire data cura
 
 ---
 
+> [!IMPORTANT]
+> **CPU Thread Contention**: On multi-core servers, OpenMP / MKL thread pools can cause spin-lock overhead on small matrix operations. Always set thread limits when running evaluation scripts:
+> ```bash
+> export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
+> ```
+
 ## 1. Environment Setup
 
 ### 1.1 Hardware Requirements
@@ -178,7 +184,30 @@ Evaluates Vision-Only Triad vs. Multimodal Quad-Model Late Fusion across all 3 s
 ```
 *Output*: `artifacts/prism2_benchmark_3seeds.json`
 
-### Step 3.3: Generate All Evaluation Figures & Failure Analysis Tables
+---
+
+## 6. Main Benchmark Reproduction
+
+Runs the master evaluation across all 3 seeds, reproducing the main results tables:
+
+```bash
+OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
+.env_path_agent/bin/python scripts/eval_3seeds_comparison.py --mode both
+```
+
+---
+
+
+### 6.1: Ablation Study of Agent Search Architectures
+
+To evaluate the comparative impact of different autonomous search paradigms, run the 5-paradigm agent architecture ablation study:
+
+```bash
+OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
+.env_path_agent/bin/python scripts/run_agent_search_ablation.py --seeds 42 1337 2026
+```
+
+### Step 6.2: Generate All Evaluation Figures & Failure Analysis Tables
 Renders publication-quality figures and per-class statistical tables:
 ```bash
 .env_path_agent/bin/python scripts/generate_evaluation_figures.py
@@ -191,3 +220,33 @@ Renders publication-quality figures and per-class statistical tables:
 5. `calibration_impact.png`: Subtype recall before and after prior-shift adjustment ($\tau=0.4$).
 6. `fusion_performance_summary.png`: Summary bar charts of AUROC and Balanced Accuracy with standard deviation error bars.
 7. `artifacts/per_class_auroc_breakdown.md`: Complete numerical per-class AUROC table across all models and seeds.
+
+---
+
+## 7. Repository Layout
+
+```
+Pathology-FoundationModels-Fusion-Agent/
+├── conf/
+│   ├── agent.yaml           # Search agent hyperparameters & guardrails
+│   ├── embeddings.yaml      # Foundation models and concat_mean_max pooling
+│   ├── fusion.yaml          # Search spaces for Early, Late, and Intermediate fusion
+│   └── data.yaml            # Dataset paths, cohort size (204), and magnification settings
+├── src/
+│   ├── agent/               # Autonomous search engines (v1–v5)
+│   ├── fusion/              # Multimodal fusion models (Late, Early, StreamABMIL)
+│   ├── embeddings/          # Model-specific feature extraction logic
+│   └── eval/                # Bootstrap CIs, AUROC, and calibration metrics
+├── scripts/
+│   ├── eval_3seeds_comparison.py       # Master evaluation script (Main results table)
+│   ├── run_agent_search_ablation.py    # 5-paradigm agent ablation runner
+│   └── generate_evaluation_figures.py  # ROC and other figures generator
+├── artifacts/
+│   ├── splits/              # Frozen, zero-leakage patient-level splits (seeds 42, 1337, 2026)
+│   ├── features/            # Precomputed FP16 slide-level embeddings
+│   ├── figures/             # High-resolution PNG figures & confusion matrices
+│   └── results/             # Machine-readable JSON logs for agent search trials
+├── REPRODUCIBILITY.md       # This reproducibility guide
+└── README.md                # Challenge task description and rubric
+```
+
