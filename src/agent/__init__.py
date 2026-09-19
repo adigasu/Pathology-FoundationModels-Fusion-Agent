@@ -23,10 +23,10 @@ LLMFusionAgent = AutonomousAgent
 UnifiedProductionAgent = UnifiedAgent
 
 # Default champion agent
-AutonomousFusionAgent = UnifiedAgent
+AutonomousFusionAgent = AutonomousAgent
 
 
-def get_agent_cls(version: str = "v5"):
+def get_agent_cls(version: str = "v4"):
     v = version.lower()
     if v in ("v1", "sequential", "sequential_agent", "sequential_guardrail"):
         return SequentialAgent

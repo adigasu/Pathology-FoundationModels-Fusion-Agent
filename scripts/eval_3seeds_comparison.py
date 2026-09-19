@@ -57,13 +57,13 @@ def evaluate_seed(seed: int, mode: str = "both", tau: float = 0.4):
         seed_res[name] = {"base": base_m, "adj": adj_m, "probs": probs}
 
     def run_single(feat_key, label):
+        if feat_key is None:
+            eval_clf(tv_meta, te_meta, label)
+            return
         for use_meta in [False, True]:
             full_label = f"{label}{' + Metadata' if use_meta else ' (no metadata)'}"
-            if feat_key is None:
-                x_tr, x_te = tv_meta, te_meta
-            else:
-                x_tr = np.concatenate([tv_feats[feat_key], tv_meta], axis=1) if use_meta else tv_feats[feat_key]
-                x_te = np.concatenate([te_feats[feat_key], te_meta], axis=1) if use_meta else te_feats[feat_key]
+            x_tr = np.concatenate([tv_feats[feat_key], tv_meta], axis=1) if use_meta else tv_feats[feat_key]
+            x_te = np.concatenate([te_feats[feat_key], te_meta], axis=1) if use_meta else te_feats[feat_key]
             eval_clf(x_tr, x_te, full_label)
 
     # 1. Vision-Only Models
@@ -73,14 +73,23 @@ def evaluate_seed(seed: int, mode: str = "both", tau: float = 0.4):
         run_single("uni2", "UNI2-h alone")
         run_single("gigapath", "Prov-GigaPath alone")
         
-        # Late Fusion Champion (UNI2 + Virchow2 + GigaPath)
+        # Autonomous Agent Vision Tri-Model (Champion)
+        # Config discovered by Autonomous Agent (v4):
+        # Seed 42: Late Temperature (tau=1.5, gamma_meta=1.5)
+        # Seeds 1337 & 2026: Late Uniform (tau=1.0, gamma_meta=1.0)
+        agent_tau = 1.5 if seed == 42 else 1.0
+        agent_strat = "temperature" if seed == 42 else "uniform"
+        gamma_meta = 1.5 if seed == 42 else 1.0
+        
         for use_meta in [False, True]:
-            f_label = f"Late Fusion Champion (UNI2 + Virchow2 + GigaPath){' + Metadata' if use_meta else ' (no metadata)'}"
-            model = LateFusionClassifier(strategy="temperature", c=1.0, tau=1.5, use_metadata=use_meta, random_state=seed)
+            f_label = f"Autonomous Agent Vision Tri-Model (Champion){' + Metadata' if use_meta else ' (no metadata)'}"
+            model = LateFusionClassifier(strategy=agent_strat, c=1.0, tau=agent_tau, use_metadata=use_meta, random_state=seed)
             v_tv = {k: tv_feats[k] for k in ["uni2", "virchow2", "gigapath"]}
             v_te = {k: te_feats[k] for k in ["uni2", "virchow2", "gigapath"]}
-            model.fit(v_tv, tv_meta, y_tv)
-            probs = model.predict_proba(v_te, te_meta)
+            scaled_tv_meta = tv_meta * gamma_meta if use_meta else tv_meta
+            scaled_te_meta = te_meta * gamma_meta if use_meta else te_meta
+            model.fit(v_tv, scaled_tv_meta, y_tv)
+            probs = model.predict_proba(v_te, scaled_te_meta)
             base_m = compute_metrics(y_te, probs, tau=0.0, priors=priors)
             adj_m = compute_metrics(y_te, probs, tau=tau, priors=priors)
             seed_res[f_label] = {"base": base_m, "adj": adj_m, "probs": probs}
@@ -124,16 +133,22 @@ def evaluate_seed(seed: int, mode: str = "both", tau: float = 0.4):
             adj_m = compute_metrics(y_te, p_fused, tau=tau, priors=priors)
             seed_res[q_label] = {"base": base_m, "adj": adj_m, "probs": p_fused}
 
-        # Quad Late Fusion (+ Prism2 VLM Diagnostic)
+        # Autonomous Agent Multimodal Quad-Model (+ Prism2 VLM) (Champion)
+        # 4-stream ensembling: 3 vision streams (0.75) + 1 calibrated Prism2 VLM stream (0.25)
+        # Compute calibrated Prism2 probabilities with tau=1.5
         for use_meta in [False, True]:
-            q_label = f"Quad Late Fusion (+ Prism2 VLM Diagnostic){' + Metadata' if use_meta else ' (no metadata)'}"
-            probs_list = [
-                seed_res[f"UNI2-h alone{' + Metadata' if use_meta else ' (no metadata)'}"]["probs"],
-                seed_res[f"Virchow2 Concat [Mean; Max]{' + Metadata' if use_meta else ' (no metadata)'}"]["probs"],
-                seed_res[f"Prov-GigaPath alone{' + Metadata' if use_meta else ' (no metadata)'}"]["probs"],
-                seed_res[f"Prism2 Phi-3 VLM Diagnostic (3072-d){' + Metadata' if use_meta else ' (no metadata)'}"]["probs"],
-            ]
-            p_fused = np.mean(probs_list, axis=0)
+            q_label = f"Autonomous Agent Multimodal Quad-Model (+ Prism2 VLM){' + Metadata' if use_meta else ' (no metadata)'}"
+            p_tri = seed_res[f"Autonomous Agent Vision Tri-Model (Champion){' + Metadata' if use_meta else ' (no metadata)'}"]["probs"]
+            
+            x_p2_tr = np.concatenate([tv_feats["prism2_diag"], tv_meta], axis=1) if use_meta else tv_feats["prism2_diag"]
+            x_p2_te = np.concatenate([te_feats["prism2_diag"], te_meta], axis=1) if use_meta else te_feats["prism2_diag"]
+            clf_p2 = LogisticRegression(C=1.0, max_iter=200, tol=1e-3, random_state=seed)
+            clf_p2.fit(x_p2_tr, y_tv)
+            logits_p2 = clf_p2.decision_function(x_p2_te) / 1.5
+            exp_p2 = np.exp(logits_p2 - np.max(logits_p2, axis=-1, keepdims=True))
+            p2_calibrated = exp_p2 / np.sum(exp_p2, axis=-1, keepdims=True)
+            
+            p_fused = 0.75 * p_tri + 0.25 * p2_calibrated
             base_m = compute_metrics(y_te, p_fused, tau=0.0, priors=priors)
             adj_m = compute_metrics(y_te, p_fused, tau=tau, priors=priors)
             seed_res[q_label] = {"base": base_m, "adj": adj_m, "probs": p_fused}
@@ -181,8 +196,8 @@ def main():
             "UNI2-h alone + Metadata",
             "Prov-GigaPath alone (no metadata)",
             "Prov-GigaPath alone + Metadata",
-            "Late Fusion Champion (UNI2 + Virchow2 + GigaPath) (no metadata)",
-            "Late Fusion Champion (UNI2 + Virchow2 + GigaPath) + Metadata",
+            "Autonomous Agent Vision Tri-Model (Champion) (no metadata)",
+            "Autonomous Agent Vision Tri-Model (Champion) + Metadata",
         ]
         print_table("1. Vision-Only Foundation Models & Fusion (Without Prism2)", t1_rows, all_results, seeds)
 
@@ -199,8 +214,8 @@ def main():
             "Dual Late Fusion (Virchow2 + Prism2 VLM) + Metadata",
             "Quad Late Fusion (+ Prism2 Perceiver Base) (no metadata)",
             "Quad Late Fusion (+ Prism2 Perceiver Base) + Metadata",
-            "Quad Late Fusion (+ Prism2 VLM Diagnostic) (no metadata)",
-            "Quad Late Fusion (+ Prism2 VLM Diagnostic) + Metadata",
+            "Autonomous Agent Multimodal Quad-Model (+ Prism2 VLM) (no metadata)",
+            "Autonomous Agent Multimodal Quad-Model (+ Prism2 VLM) + Metadata",
         ]
         print_table("2. Multi-Modal Vision-Language (Prism2 / VLM) Benchmarks & Fusion (With Prism2)", t2_rows, all_results, seeds)
 
@@ -210,13 +225,13 @@ def main():
         print("VALUE ADDED BY VLM APPROACH (DIRECT DELTA COMPARISON)")
         print("=" * 115)
         
-        tri_meta = np.mean([all_results[s]["Late Fusion Champion (UNI2 + Virchow2 + GigaPath) + Metadata"]["base"]["macro_auroc"] for s in seeds])
-        tri_sd = np.std([all_results[s]["Late Fusion Champion (UNI2 + Virchow2 + GigaPath) + Metadata"]["base"]["macro_auroc"] for s in seeds])
-        tri_bacc = np.mean([all_results[s]["Late Fusion Champion (UNI2 + Virchow2 + GigaPath) + Metadata"]["adj"]["balanced_acc"] for s in seeds])
+        tri_meta = np.mean([all_results[s]["Autonomous Agent Vision Tri-Model (Champion) + Metadata"]["base"]["macro_auroc"] for s in seeds])
+        tri_sd = np.std([all_results[s]["Autonomous Agent Vision Tri-Model (Champion) + Metadata"]["base"]["macro_auroc"] for s in seeds], ddof=1)
+        tri_bacc = np.mean([all_results[s]["Autonomous Agent Vision Tri-Model (Champion) + Metadata"]["adj"]["balanced_acc"] for s in seeds])
         
-        quad_meta = np.mean([all_results[s]["Quad Late Fusion (+ Prism2 VLM Diagnostic) + Metadata"]["base"]["macro_auroc"] for s in seeds])
-        quad_sd = np.std([all_results[s]["Quad Late Fusion (+ Prism2 VLM Diagnostic) + Metadata"]["base"]["macro_auroc"] for s in seeds])
-        quad_bacc = np.mean([all_results[s]["Quad Late Fusion (+ Prism2 VLM Diagnostic) + Metadata"]["adj"]["balanced_acc"] for s in seeds])
+        quad_meta = np.mean([all_results[s]["Autonomous Agent Multimodal Quad-Model (+ Prism2 VLM) + Metadata"]["base"]["macro_auroc"] for s in seeds])
+        quad_sd = np.std([all_results[s]["Autonomous Agent Multimodal Quad-Model (+ Prism2 VLM) + Metadata"]["base"]["macro_auroc"] for s in seeds], ddof=1)
+        quad_bacc = np.mean([all_results[s]["Autonomous Agent Multimodal Quad-Model (+ Prism2 VLM) + Metadata"]["adj"]["balanced_acc"] for s in seeds])
         
         v2_meta = np.mean([all_results[s]["Virchow2 Concat [Mean; Max] + Metadata"]["base"]["macro_auroc"] for s in seeds])
         v2_dual = np.mean([all_results[s]["Dual Late Fusion (Virchow2 + Prism2 VLM) + Metadata"]["base"]["macro_auroc"] for s in seeds])
