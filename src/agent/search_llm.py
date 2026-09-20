@@ -428,7 +428,7 @@ class LLMFusionAgent:
             "   - 'early': Direct concatenation without PCA (pca_dim=null, l2_norm=false) is strong, but PCA projection tends to discard subtle histotype variance.\n"
             "   - 'intermediate': Neural gating often overfits on 164 samples compared to calibrated late fusion.\n"
             "3. Slide Pooling: 'concat' ([mean; max] multi-resolution) reliably captures both architectural and focal cues.\n"
-            "4. SE Guardrail: A candidate replaces the Champion only if mean(Delta_fold) >= 0.5 * SE(Delta_fold).\n\n"
+            "4. SE Guardrail: A candidate replaces the Champion only if mean(Delta_fold) >= 1.0 * SE(Delta_fold).\n\n"
             "Search Space:\n"
             "- Pooling: 'concat' ([mean; max] multi-resolution), 'mean', or 'max'.\n"
             "- Family: 'early', 'late', or 'intermediate'.\n"
@@ -667,7 +667,7 @@ class LLMFusionAgent:
             f"**Champion Hypothesis**: {self.champion.get('hypothesis', 'N/A')}  ",
             f"**Guardrail Policy**: Adopt if $\\bar{{\\Delta}} \\ge {self.k_se:.1f} \\times \\text{{SE}}_{{\\Delta}}$ (patience = {self.max_consecutive_failures})\n",
             "## Trial Progression & Auditable Decision Records\n",
-            "| Trial | Source | Family | Pooling | CV AUROC | Delta vs Champ | SE(Delta) | Threshold (0.5×SE) | Decision | Action / Reason |",
+            "| Trial | Source | Family | Pooling | CV AUROC | Delta vs Champ | SE(Delta) | Threshold (k_se×SE) | Decision | Action / Reason |",
             "| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :--- |"
         ]
 

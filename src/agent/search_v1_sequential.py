@@ -383,7 +383,7 @@ class AutonomousFusionAgent:
             f"**Champion Params**: `{json.dumps(self.champion['config']['params'])}`  ",
             f"**Champion Pooling**: `{self.champion.get('pooling', 'mean')}` | **gamma_meta**: `{self.champion.get('gamma_meta', 1.0)}`\n",
             "## Trial Progression & SE Guardrail Decisions\n",
-            "| Trial | Stage | Hypothesis | Family | CV AUROC | Delta vs Champ | SE(Delta) | Threshold (0.5×SE) | Decision | Action/Reason |",
+            "| Trial | Stage | Hypothesis | Family | CV AUROC | Delta vs Champ | SE(Delta) | Threshold (k_se×SE) | Decision | Action/Reason |",
             "| :---: | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :--- |"
         ]
 
