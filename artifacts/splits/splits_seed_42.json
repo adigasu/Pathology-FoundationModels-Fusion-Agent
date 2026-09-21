@@ -1,0 +1,1031 @@
+{
+  "seed": 42,
+  "counts": {
+    "train": 142,
+    "val": 21,
+    "test": 41,
+    "total": 204
+  },
+  "patient_splits": {
+    "8227741_56_Female": {
+      "wsi_id": "WSI-354",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8539620_53_Female": {
+      "wsi_id": "WSI-310",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8246451_52_Female": {
+      "wsi_id": "WSI-393",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8244091_52_Male": {
+      "wsi_id": "WSI-403",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8234200_65_Male": {
+      "wsi_id": "WSI-371",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8227276_45_Female": {
+      "wsi_id": "WSI-355",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8249974_27_Female": {
+      "wsi_id": "WSI-397",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8494497_62_Female": {
+      "wsi_id": "WSI-275",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8225155_47_Female": {
+      "wsi_id": "WSI-349",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8224566_46_Male": {
+      "wsi_id": "WSI-363",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8495760_44_Male": {
+      "wsi_id": "WSI-280",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8234694_39_Female": {
+      "wsi_id": "WSI-360",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8248702_53_Female": {
+      "wsi_id": "WSI-400",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8146413_74_Male": {
+      "wsi_id": "WSI-286",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8245910_51_Female": {
+      "wsi_id": "WSI-386",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8447059_58_Female": {
+      "wsi_id": "WSI-300",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8534227_44_Female": {
+      "wsi_id": "WSI-304",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8245975_60_Male": {
+      "wsi_id": "WSI-380",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8378774_54_Male": {
+      "wsi_id": "WSI-31",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8514715_60_Male": {
+      "wsi_id": "WSI-282",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8007623_55_Male": {
+      "wsi_id": "WSI-369",
+      "split": "train",
+      "subtype": "Acinar"
+    },
+    "8231081_57_Male": {
+      "wsi_id": "WSI-375",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8384801_56_Male": {
+      "wsi_id": "WSI-59",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8452560_72_Male": {
+      "wsi_id": "WSI-273",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8428475_49_Female": {
+      "wsi_id": "WSI-201",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8427889_40_Male": {
+      "wsi_id": "WSI-211",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8029758_55_Female": {
+      "wsi_id": "WSI-105",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8375372_70_Female": {
+      "wsi_id": "WSI-16",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8441492_62_Male": {
+      "wsi_id": "WSI-267",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8203346_71_Male": {
+      "wsi_id": "WSI-196",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8445196_66_Male": {
+      "wsi_id": "WSI-244",
+      "split": "train",
+      "subtype": "Cribriform"
+    },
+    "8387212_53_Male": {
+      "wsi_id": "WSI-73",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8245273_44_Female": {
+      "wsi_id": "WSI-388",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8381316_50_Female": {
+      "wsi_id": "WSI-44",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8246145_45_Female": {
+      "wsi_id": "WSI-383",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8378244_44_Female": {
+      "wsi_id": "WSI-27",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8380032_62_Male": {
+      "wsi_id": "WSI-37",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8133249_56_Female": {
+      "wsi_id": "WSI-21",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8227640_46_Female": {
+      "wsi_id": "WSI-358",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8328230_46_Female": {
+      "wsi_id": "WSI-7",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8022410_31_Female": {
+      "wsi_id": "WSI-71",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8020981_36_Female": {
+      "wsi_id": "WSI-392",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8378183_49_Female": {
+      "wsi_id": "WSI-23",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8143088_56_Female": {
+      "wsi_id": "WSI-378",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8246551_49_Female": {
+      "wsi_id": "WSI-379",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8385363_59_Male": {
+      "wsi_id": "WSI-57",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8340298_51_Male": {
+      "wsi_id": "WSI-3",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8246209_54_Female": {
+      "wsi_id": "WSI-387",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8249894_61_Female": {
+      "wsi_id": "WSI-404",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8378935_69_Female": {
+      "wsi_id": "WSI-29",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8383378_59_Female": {
+      "wsi_id": "WSI-65",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8382068_35_Female": {
+      "wsi_id": "WSI-46",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8374253_40_Female": {
+      "wsi_id": "WSI-11",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8337687_45_Female": {
+      "wsi_id": "WSI-67",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8377498_46_Female": {
+      "wsi_id": "WSI-19",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8243986_50_Female": {
+      "wsi_id": "WSI-374",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8225911_49_Female": {
+      "wsi_id": "WSI-353",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8374273_53_Female": {
+      "wsi_id": "WSI-5",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8381104_37_Female": {
+      "wsi_id": "WSI-42",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8215472_53_Male": {
+      "wsi_id": "WSI-385",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8251346_62_Male": {
+      "wsi_id": "WSI-406",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8385456_50_Female": {
+      "wsi_id": "WSI-61",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8373888_52_Male": {
+      "wsi_id": "WSI-13",
+      "split": "train",
+      "subtype": "In situ"
+    },
+    "8170462_45_Female": {
+      "wsi_id": "WSI-346",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8225322_67_Female": {
+      "wsi_id": "WSI-347",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8246791_51_Female": {
+      "wsi_id": "WSI-389",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8542525_50_Male": {
+      "wsi_id": "WSI-311",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8248340_57_Female": {
+      "wsi_id": "WSI-391",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8547959_58_Female": {
+      "wsi_id": "WSI-316",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8551521_55_Female": {
+      "wsi_id": "WSI-325",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8540568_58_Male": {
+      "wsi_id": "WSI-318",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8242401_57_Female": {
+      "wsi_id": "WSI-370",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8248415_49_Female": {
+      "wsi_id": "WSI-398",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8163836_54_Male": {
+      "wsi_id": "WSI-341",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8533034_73_Female": {
+      "wsi_id": "WSI-295",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8221946_60_Male": {
+      "wsi_id": "WSI-350",
+      "split": "train",
+      "subtype": "Lepidic"
+    },
+    "8430453_44_Female": {
+      "wsi_id": "WSI-202",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8441170_53_Male": {
+      "wsi_id": "WSI-238",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8386241_43_Male": {
+      "wsi_id": "WSI-66",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8390717_69_Male": {
+      "wsi_id": "WSI-80",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8439102_73_Female": {
+      "wsi_id": "WSI-230",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8536033_67_Male": {
+      "wsi_id": "WSI-302",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8393154_58_Female": {
+      "wsi_id": "WSI-83",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8553258_55_Male": {
+      "wsi_id": "WSI-336",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8386141_58_Male": {
+      "wsi_id": "WSI-190",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8250645_47_Female": {
+      "wsi_id": "WSI-194",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8429439_55_Male": {
+      "wsi_id": "WSI-198",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8442830_53_Male": {
+      "wsi_id": "WSI-258",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8417145_50_Female": {
+      "wsi_id": "WSI-166",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8551092_51_Female": {
+      "wsi_id": "WSI-327",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8446426_57_Female": {
+      "wsi_id": "WSI-253",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8180155_65_Male": {
+      "wsi_id": "WSI-331",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8415370_59_Female": {
+      "wsi_id": "WSI-154",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8404220_62_Female": {
+      "wsi_id": "WSI-114",
+      "split": "train",
+      "subtype": "Micropapillary"
+    },
+    "8405402_70_Female": {
+      "wsi_id": "WSI-118",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8422802_73_Male": {
+      "wsi_id": "WSI-180",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8385282_63_Female": {
+      "wsi_id": "WSI-63",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8103477_47_Female": {
+      "wsi_id": "WSI-97",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8342197_50_Female": {
+      "wsi_id": "WSI-174",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8246533_54_Female": {
+      "wsi_id": "WSI-382",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8445479_63_Female": {
+      "wsi_id": "WSI-250",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8017082_63_Female": {
+      "wsi_id": "WSI-265",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8420384_62_Female": {
+      "wsi_id": "WSI-220",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8555105_48_Female": {
+      "wsi_id": "WSI-334",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8377886_69_Female": {
+      "wsi_id": "WSI-103",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8432886_52_Male": {
+      "wsi_id": "WSI-209",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8424956_59_Female": {
+      "wsi_id": "WSI-192",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8532866_71_Female": {
+      "wsi_id": "WSI-292",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8403108_53_Male": {
+      "wsi_id": "WSI-127",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8399843_53_Male": {
+      "wsi_id": "WSI-93",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8404498_54_Male": {
+      "wsi_id": "WSI-120",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8403576_64_Female": {
+      "wsi_id": "WSI-109",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8380598_51_Male": {
+      "wsi_id": "WSI-77",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8424691_59_Female": {
+      "wsi_id": "WSI-182",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8414703_67_Female": {
+      "wsi_id": "WSI-152",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8400161_59_Female": {
+      "wsi_id": "WSI-98",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8377886_68_Female": {
+      "wsi_id": "WSI-35",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8534345_79_Female": {
+      "wsi_id": "WSI-297",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8408497_66_Male": {
+      "wsi_id": "WSI-140",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8449479_59_Male": {
+      "wsi_id": "WSI-271",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8416065_70_Female": {
+      "wsi_id": "WSI-248",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8239884_52_Male": {
+      "wsi_id": "WSI-367",
+      "split": "train",
+      "subtype": "Papillary"
+    },
+    "8417654_43_Male": {
+      "wsi_id": "WSI-163",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8402871_46_Male": {
+      "wsi_id": "WSI-100",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8404064_52_Female": {
+      "wsi_id": "WSI-130",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8407602_50_Male": {
+      "wsi_id": "WSI-137",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8276073_59_Female": {
+      "wsi_id": "WSI-160",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8431695_57_Female": {
+      "wsi_id": "WSI-207",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8406776_60_Male": {
+      "wsi_id": "WSI-135",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8403586_53_Female": {
+      "wsi_id": "WSI-122",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8111526_47_Female": {
+      "wsi_id": "WSI-232",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8430989_57_Female": {
+      "wsi_id": "WSI-204",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8322782_66_Male": {
+      "wsi_id": "WSI-107",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8424483_56_Male": {
+      "wsi_id": "WSI-186",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8013888_63_Female": {
+      "wsi_id": "WSI-255",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8419053_73_Male": {
+      "wsi_id": "WSI-177",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8436460_66_Female": {
+      "wsi_id": "WSI-241",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8446030_58_Female": {
+      "wsi_id": "WSI-261",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8399864_75_Female": {
+      "wsi_id": "WSI-95",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8375043_57_Male": {
+      "wsi_id": "WSI-193",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8406914_62_Male": {
+      "wsi_id": "WSI-132",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8383521_59_Male": {
+      "wsi_id": "WSI-86",
+      "split": "train",
+      "subtype": "Solid"
+    },
+    "8355990_69_Female": {
+      "wsi_id": "WSI-288",
+      "split": "val",
+      "subtype": "Acinar"
+    },
+    "8552577_70_Male": {
+      "wsi_id": "WSI-329",
+      "split": "val",
+      "subtype": "Acinar"
+    },
+    "8505034_60_Female": {
+      "wsi_id": "WSI-320",
+      "split": "val",
+      "subtype": "Acinar"
+    },
+    "8126701_67_Male": {
+      "wsi_id": "WSI-264",
+      "split": "val",
+      "subtype": "Cribriform"
+    },
+    "8444525_66_Female": {
+      "wsi_id": "WSI-245",
+      "split": "val",
+      "subtype": "Cribriform"
+    },
+    "8223039_53_Female": {
+      "wsi_id": "WSI-345",
+      "split": "val",
+      "subtype": "In situ"
+    },
+    "8189481_47_Female": {
+      "wsi_id": "WSI-55",
+      "split": "val",
+      "subtype": "In situ"
+    },
+    "8365118_30_Female": {
+      "wsi_id": "WSI-9",
+      "split": "val",
+      "subtype": "In situ"
+    },
+    "8377922_42_Female": {
+      "wsi_id": "WSI-25",
+      "split": "val",
+      "subtype": "In situ"
+    },
+    "8248357_44_Male": {
+      "wsi_id": "WSI-390",
+      "split": "val",
+      "subtype": "Lepidic"
+    },
+    "8248854_54_Female": {
+      "wsi_id": "WSI-396",
+      "split": "val",
+      "subtype": "Lepidic"
+    },
+    "8412818_58_Male": {
+      "wsi_id": "WSI-147",
+      "split": "val",
+      "subtype": "Micropapillary"
+    },
+    "8413637_62_Male": {
+      "wsi_id": "WSI-150",
+      "split": "val",
+      "subtype": "Micropapillary"
+    },
+    "8495518_52_Male": {
+      "wsi_id": "WSI-277",
+      "split": "val",
+      "subtype": "Micropapillary"
+    },
+    "8060308_68_Male": {
+      "wsi_id": "WSI-213",
+      "split": "val",
+      "subtype": "Papillary"
+    },
+    "8404326_74_Female": {
+      "wsi_id": "WSI-111",
+      "split": "val",
+      "subtype": "Papillary"
+    },
+    "8425512_64_Female": {
+      "wsi_id": "WSI-184",
+      "split": "val",
+      "subtype": "Papillary"
+    },
+    "8436038_50_Female": {
+      "wsi_id": "WSI-217",
+      "split": "val",
+      "subtype": "Papillary"
+    },
+    "8414312_42_Male": {
+      "wsi_id": "WSI-157",
+      "split": "val",
+      "subtype": "Solid"
+    },
+    "8008524_54_Female": {
+      "wsi_id": "WSI-361",
+      "split": "val",
+      "subtype": "Solid"
+    },
+    "8410228_59_Male": {
+      "wsi_id": "WSI-143",
+      "split": "val",
+      "subtype": "Solid"
+    },
+    "8238261_47_Female": {
+      "wsi_id": "WSI-366",
+      "split": "test",
+      "subtype": "Acinar"
+    },
+    "8227980_50_Female": {
+      "wsi_id": "WSI-352",
+      "split": "test",
+      "subtype": "Acinar"
+    },
+    "8543369_60_Female": {
+      "wsi_id": "WSI-313",
+      "split": "test",
+      "subtype": "Acinar"
+    },
+    "8250185_49_Male": {
+      "wsi_id": "WSI-394",
+      "split": "test",
+      "subtype": "Acinar"
+    },
+    "8240634_54_Female": {
+      "wsi_id": "WSI-372",
+      "split": "test",
+      "subtype": "Acinar"
+    },
+    "8532614_72_Female": {
+      "wsi_id": "WSI-290",
+      "split": "test",
+      "subtype": "Acinar"
+    },
+    "8435204_72_Female": {
+      "wsi_id": "WSI-228",
+      "split": "test",
+      "subtype": "Cribriform"
+    },
+    "8441511_80_Male": {
+      "wsi_id": "WSI-235",
+      "split": "test",
+      "subtype": "Cribriform"
+    },
+    "8280993_67_Female": {
+      "wsi_id": "WSI-116",
+      "split": "test",
+      "subtype": "Cribriform"
+    },
+    "8250047_43_Female": {
+      "wsi_id": "WSI-407",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8373873_48_Female": {
+      "wsi_id": "WSI-1",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8380220_35_Male": {
+      "wsi_id": "WSI-39",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8384436_35_Female": {
+      "wsi_id": "WSI-51",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8238702_56_Female": {
+      "wsi_id": "WSI-362",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8228780_44_Female": {
+      "wsi_id": "WSI-357",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8386342_35_Female": {
+      "wsi_id": "WSI-69",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8030821_34_Female": {
+      "wsi_id": "WSI-33",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8229292_36_Female": {
+      "wsi_id": "WSI-359",
+      "split": "test",
+      "subtype": "In situ"
+    },
+    "8509161_64_Female": {
+      "wsi_id": "WSI-308",
+      "split": "test",
+      "subtype": "Lepidic"
+    },
+    "8248805_46_Female": {
+      "wsi_id": "WSI-401",
+      "split": "test",
+      "subtype": "Lepidic"
+    },
+    "8520787_59_Male": {
+      "wsi_id": "WSI-284",
+      "split": "test",
+      "subtype": "Lepidic"
+    },
+    "8237784_53_Female": {
+      "wsi_id": "WSI-364",
+      "split": "test",
+      "subtype": "Lepidic"
+    },
+    "8251032_49_Female": {
+      "wsi_id": "WSI-408",
+      "split": "test",
+      "subtype": "Micropapillary"
+    },
+    "8551431_56_Male": {
+      "wsi_id": "WSI-322",
+      "split": "test",
+      "subtype": "Micropapillary"
+    },
+    "8411469_57_Male": {
+      "wsi_id": "WSI-169",
+      "split": "test",
+      "subtype": "Micropapillary"
+    },
+    "8423960_41_Female": {
+      "wsi_id": "WSI-188",
+      "split": "test",
+      "subtype": "Micropapillary"
+    },
+    "8396592_70_Male": {
+      "wsi_id": "WSI-89",
+      "split": "test",
+      "subtype": "Micropapillary"
+    },
+    "8408447_60_Female": {
+      "wsi_id": "WSI-138",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8400293_46_Female": {
+      "wsi_id": "WSI-91",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8380665_53_Female": {
+      "wsi_id": "WSI-41",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8275340_71_Male": {
+      "wsi_id": "WSI-112",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8228355_56_Female": {
+      "wsi_id": "WSI-356",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8448471_50_Male": {
+      "wsi_id": "WSI-270",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8418084_49_Female": {
+      "wsi_id": "WSI-172",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8425534_65_Female": {
+      "wsi_id": "WSI-222",
+      "split": "test",
+      "subtype": "Papillary"
+    },
+    "8383318_69_Male": {
+      "wsi_id": "WSI-48",
+      "split": "test",
+      "subtype": "Solid"
+    },
+    "8250390_49_Female": {
+      "wsi_id": "WSI-405",
+      "split": "test",
+      "subtype": "Solid"
+    },
+    "8243928_50_Male": {
+      "wsi_id": "WSI-377",
+      "split": "test",
+      "subtype": "Solid"
+    },
+    "8407538_24_Female": {
+      "wsi_id": "WSI-145",
+      "split": "test",
+      "subtype": "Solid"
+    },
+    "8435688_66_Male": {
+      "wsi_id": "WSI-224",
+      "split": "test",
+      "subtype": "Solid"
+    },
+    "8422879_51_Male": {
+      "wsi_id": "WSI-179",
+      "split": "test",
+      "subtype": "Solid"
+    }
+  }
+}

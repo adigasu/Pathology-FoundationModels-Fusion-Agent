@@ -1,0 +1,205 @@
+patient_id,SampleNumber,WSI_ID,Tumor Subtype,Age,Sex,total_patient_slides,available_patient_slides,split,seed
+8146413_74_Male,8146413,WSI-286,Acinar,74,Male,2,2,train,2026
+8505034_60_Female,8505034,WSI-320,Acinar,60,Female,2,2,train,2026
+8494497_62_Female,8494497,WSI-275,Acinar,62,Female,2,2,train,2026
+8539620_53_Female,8539620,WSI-310,Acinar,53,Female,1,1,train,2026
+8378774_54_Male,8378774,WSI-31,Acinar,54,Male,2,2,train,2026
+8245910_51_Female,8245910,WSI-386,Acinar,51,Female,1,1,train,2026
+8227980_50_Female,8227980,WSI-352,Acinar,50,Female,1,1,train,2026
+8227741_56_Female,8227741,WSI-354,Acinar,56,Female,1,1,train,2026
+8246451_52_Female,8246451,WSI-393,Acinar,52,Female,1,1,train,2026
+8224566_46_Male,8224566,WSI-363,Acinar,46,Male,1,1,train,2026
+8225155_47_Female,8225155,WSI-349,Acinar,47,Female,1,1,train,2026
+8234694_39_Female,8234694,WSI-360,Acinar,39,Female,1,1,train,2026
+8240634_54_Female,8240634,WSI-372,Acinar,54,Female,2,2,train,2026
+8238261_47_Female,8238261,WSI-366,Acinar,47,Female,1,1,train,2026
+8447059_58_Female,8447059,WSI-300,Acinar,58,Female,2,2,train,2026
+8244091_52_Male,8244091,WSI-403,Acinar,52,Male,1,1,train,2026
+8007623_55_Male,8007623,WSI-369,Acinar,55,Male,1,1,train,2026
+8249974_27_Female,8249974,WSI-397,Acinar,27,Female,1,1,train,2026
+8227276_45_Female,8227276,WSI-355,Acinar,45,Female,1,1,train,2026
+8543369_60_Female,8543369,WSI-313,Acinar,60,Female,2,2,train,2026
+8514715_60_Male,8514715,WSI-282,Acinar,60,Male,2,2,train,2026
+8126701_67_Male,8126701,WSI-264,Cribriform,67,Male,1,1,train,2026
+8231081_57_Male,8231081,WSI-375,Cribriform,57,Male,1,1,train,2026
+8445196_66_Male,8445196,WSI-244,Cribriform,66,Male,1,1,train,2026
+8441492_62_Male,8441492,WSI-267,Cribriform,62,Male,2,2,train,2026
+8384801_56_Male,8384801,WSI-59,Cribriform,56,Male,2,2,train,2026
+8441511_80_Male,8441511,WSI-235,Cribriform,80,Male,3,2,train,2026
+8427889_40_Male,8427889,WSI-211,Cribriform,40,Male,2,2,train,2026
+8452560_72_Male,8452560,WSI-273,Cribriform,72,Male,2,2,train,2026
+8428475_49_Female,8428475,WSI-201,Cribriform,49,Female,2,1,train,2026
+8203346_71_Male,8203346,WSI-196,Cribriform,71,Male,2,2,train,2026
+8378183_49_Female,8378183,WSI-23,In situ,49,Female,2,2,train,2026
+8378244_44_Female,8378244,WSI-27,In situ,44,Female,2,2,train,2026
+8328230_46_Female,8328230,WSI-7,In situ,46,Female,2,2,train,2026
+8385456_50_Female,8385456,WSI-61,In situ,50,Female,2,2,train,2026
+8250047_43_Female,8250047,WSI-407,In situ,43,Female,1,1,train,2026
+8365118_30_Female,8365118,WSI-9,In situ,30,Female,2,2,train,2026
+8238702_56_Female,8238702,WSI-362,In situ,56,Female,1,1,train,2026
+8143088_56_Female,8143088,WSI-378,In situ,56,Female,1,1,train,2026
+8373873_48_Female,8373873,WSI-1,In situ,48,Female,2,2,train,2026
+8246209_54_Female,8246209,WSI-387,In situ,54,Female,1,1,train,2026
+8223039_53_Female,8223039,WSI-345,In situ,53,Female,1,1,train,2026
+8380220_35_Male,8380220,WSI-39,In situ,35,Male,2,2,train,2026
+8382068_35_Female,8382068,WSI-46,In situ,35,Female,2,2,train,2026
+8030821_34_Female,8030821,WSI-33,In situ,34,Female,2,2,train,2026
+8133249_56_Female,8133249,WSI-21,In situ,56,Female,2,2,train,2026
+8381104_37_Female,8381104,WSI-42,In situ,37,Female,2,2,train,2026
+8215472_53_Male,8215472,WSI-385,In situ,53,Male,2,1,train,2026
+8378935_69_Female,8378935,WSI-29,In situ,69,Female,2,2,train,2026
+8243986_50_Female,8243986,WSI-374,In situ,50,Female,1,1,train,2026
+8246145_45_Female,8246145,WSI-383,In situ,45,Female,1,1,train,2026
+8377498_46_Female,8377498,WSI-19,In situ,46,Female,2,2,train,2026
+8227640_46_Female,8227640,WSI-358,In situ,46,Female,1,1,train,2026
+8386342_35_Female,8386342,WSI-69,In situ,35,Female,2,2,train,2026
+8374253_40_Female,8374253,WSI-11,In situ,40,Female,2,2,train,2026
+8387212_53_Male,8387212,WSI-73,In situ,53,Male,4,4,train,2026
+8225911_49_Female,8225911,WSI-353,In situ,49,Female,1,1,train,2026
+8245273_44_Female,8245273,WSI-388,In situ,44,Female,1,1,train,2026
+8383378_59_Female,8383378,WSI-65,In situ,59,Female,2,1,train,2026
+8340298_51_Male,8340298,WSI-3,In situ,51,Male,2,1,train,2026
+8384436_35_Female,8384436,WSI-51,In situ,35,Female,4,4,train,2026
+8246551_49_Female,8246551,WSI-379,In situ,49,Female,1,1,train,2026
+8020981_36_Female,8020981,WSI-392,In situ,36,Female,1,1,train,2026
+8533034_73_Female,8533034,WSI-295,Lepidic,73,Female,2,2,train,2026
+8170462_45_Female,8170462,WSI-346,Lepidic,45,Female,1,1,train,2026
+8520787_59_Male,8520787,WSI-284,Lepidic,59,Male,2,2,train,2026
+8221946_60_Male,8221946,WSI-350,Lepidic,60,Male,1,1,train,2026
+8547959_58_Female,8547959,WSI-316,Lepidic,58,Female,3,2,train,2026
+8542525_50_Male,8542525,WSI-311,Lepidic,50,Male,2,2,train,2026
+8246791_51_Female,8246791,WSI-389,Lepidic,51,Female,1,1,train,2026
+8551521_55_Female,8551521,WSI-325,Lepidic,55,Female,2,2,train,2026
+8248805_46_Female,8248805,WSI-401,Lepidic,46,Female,2,2,train,2026
+8248340_57_Female,8248340,WSI-391,Lepidic,57,Female,1,1,train,2026
+8225322_67_Female,8225322,WSI-347,Lepidic,67,Female,2,2,train,2026
+8242401_57_Female,8242401,WSI-370,Lepidic,57,Female,1,1,train,2026
+8248415_49_Female,8248415,WSI-398,Lepidic,49,Female,2,2,train,2026
+8404220_62_Female,8404220,WSI-114,Micropapillary,62,Female,2,2,train,2026
+8180155_65_Male,8180155,WSI-331,Micropapillary,65,Male,3,3,train,2026
+8446426_57_Female,8446426,WSI-253,Micropapillary,57,Female,2,2,train,2026
+8495518_52_Male,8495518,WSI-277,Micropapillary,52,Male,3,3,train,2026
+8250645_47_Female,8250645,WSI-194,Micropapillary,47,Female,2,2,train,2026
+8415370_59_Female,8415370,WSI-154,Micropapillary,59,Female,3,3,train,2026
+8412818_58_Male,8412818,WSI-147,Micropapillary,58,Male,3,2,train,2026
+8411469_57_Male,8411469,WSI-169,Micropapillary,57,Male,3,3,train,2026
+8390717_69_Male,8390717,WSI-80,Micropapillary,69,Male,3,3,train,2026
+8429439_55_Male,8429439,WSI-198,Micropapillary,55,Male,2,2,train,2026
+8551431_56_Male,8551431,WSI-322,Micropapillary,56,Male,3,3,train,2026
+8441170_53_Male,8441170,WSI-238,Micropapillary,53,Male,3,3,train,2026
+8430453_44_Female,8430453,WSI-202,Micropapillary,44,Female,2,2,train,2026
+8439102_73_Female,8439102,WSI-230,Micropapillary,73,Female,2,2,train,2026
+8551092_51_Female,8551092,WSI-327,Micropapillary,51,Female,2,2,train,2026
+8417145_50_Female,8417145,WSI-166,Micropapillary,50,Female,3,3,train,2026
+8413637_62_Male,8413637,WSI-150,Micropapillary,62,Male,2,2,train,2026
+8386141_58_Male,8386141,WSI-190,Micropapillary,58,Male,2,2,train,2026
+8404326_74_Female,8404326,WSI-111,Papillary,74,Female,1,1,train,2026
+8246533_54_Female,8246533,WSI-382,Papillary,54,Female,1,1,train,2026
+8445479_63_Female,8445479,WSI-250,Papillary,63,Female,3,2,train,2026
+8400293_46_Female,8400293,WSI-91,Papillary,46,Female,2,2,train,2026
+8275340_71_Male,8275340,WSI-112,Papillary,71,Male,2,2,train,2026
+8377886_69_Female,8377886,WSI-103,Papillary,69,Female,2,2,train,2026
+8420384_62_Female,8420384,WSI-220,Papillary,62,Female,2,2,train,2026
+8380665_53_Female,8380665,WSI-41,Papillary,53,Female,1,1,train,2026
+8432886_52_Male,8432886,WSI-209,Papillary,52,Male,2,2,train,2026
+8380598_51_Male,8380598,WSI-77,Papillary,51,Male,1,1,train,2026
+8400161_59_Female,8400161,WSI-98,Papillary,59,Female,2,2,train,2026
+8228355_56_Female,8228355,WSI-356,Papillary,56,Female,1,1,train,2026
+8342197_50_Female,8342197,WSI-174,Papillary,50,Female,3,3,train,2026
+8385282_63_Female,8385282,WSI-63,Papillary,63,Female,1,1,train,2026
+8534345_79_Female,8534345,WSI-297,Papillary,79,Female,3,3,train,2026
+8414703_67_Female,8414703,WSI-152,Papillary,67,Female,2,1,train,2026
+8418084_49_Female,8418084,WSI-172,Papillary,49,Female,2,2,train,2026
+8403108_53_Male,8403108,WSI-127,Papillary,53,Male,3,3,train,2026
+8448471_50_Male,8448471,WSI-270,Papillary,50,Male,2,1,train,2026
+8399843_53_Male,8399843,WSI-93,Papillary,53,Male,2,2,train,2026
+8377886_68_Female,8377886,WSI-35,Papillary,68,Female,2,2,train,2026
+8425534_65_Female,8425534,WSI-222,Papillary,65,Female,2,1,train,2026
+8403576_64_Female,8403576,WSI-109,Papillary,64,Female,2,2,train,2026
+8436038_50_Female,8436038,WSI-217,Papillary,50,Female,3,3,train,2026
+8405402_70_Female,8405402,WSI-118,Papillary,70,Female,2,2,train,2026
+8103477_47_Female,8103477,WSI-97,Papillary,47,Female,1,1,train,2026
+8424956_59_Female,8424956,WSI-192,Papillary,59,Female,1,1,train,2026
+8017082_63_Female,8017082,WSI-265,Papillary,63,Female,2,2,train,2026
+8410228_59_Male,8410228,WSI-143,Solid,59,Male,2,2,train,2026
+8243928_50_Male,8243928,WSI-377,Solid,50,Male,1,1,train,2026
+8419053_73_Male,8419053,WSI-177,Solid,73,Male,2,2,train,2026
+8417654_43_Male,8417654,WSI-163,Solid,43,Male,3,3,train,2026
+8424483_56_Male,8424483,WSI-186,Solid,56,Male,2,2,train,2026
+8383521_59_Male,8383521,WSI-86,Solid,59,Male,3,3,train,2026
+8383318_69_Male,8383318,WSI-48,Solid,69,Male,3,3,train,2026
+8431695_57_Female,8431695,WSI-207,Solid,57,Female,2,2,train,2026
+8404064_52_Female,8404064,WSI-130,Solid,52,Female,2,2,train,2026
+8111526_47_Female,8111526,WSI-232,Solid,47,Female,3,2,train,2026
+8008524_54_Female,8008524,WSI-361,Solid,54,Female,1,1,train,2026
+8414312_42_Male,8414312,WSI-157,Solid,42,Male,3,3,train,2026
+8276073_59_Female,8276073,WSI-160,Solid,59,Female,3,3,train,2026
+8422879_51_Male,8422879,WSI-179,Solid,51,Male,1,1,train,2026
+8407602_50_Male,8407602,WSI-137,Solid,50,Male,1,1,train,2026
+8375043_57_Male,8375043,WSI-193,Solid,57,Male,1,1,train,2026
+8446030_58_Female,8446030,WSI-261,Solid,58,Female,3,3,train,2026
+8322782_66_Male,8322782,WSI-107,Solid,66,Male,2,2,train,2026
+8403586_53_Female,8403586,WSI-122,Solid,53,Female,5,5,train,2026
+8435688_66_Male,8435688,WSI-224,Solid,66,Male,3,3,train,2026
+8234200_65_Male,8234200,WSI-371,Acinar,65,Male,1,1,val,2026
+8245975_60_Male,8245975,WSI-380,Acinar,60,Male,2,2,val,2026
+8248702_53_Female,8248702,WSI-400,Acinar,53,Female,1,1,val,2026
+8444525_66_Female,8444525,WSI-245,Cribriform,66,Female,3,3,val,2026
+8029758_55_Female,8029758,WSI-105,Cribriform,55,Female,2,2,val,2026
+8380032_62_Male,8380032,WSI-37,In situ,62,Male,2,2,val,2026
+8374273_53_Female,8374273,WSI-5,In situ,53,Female,2,2,val,2026
+8249894_61_Female,8249894,WSI-404,In situ,61,Female,1,1,val,2026
+8373888_52_Male,8373888,WSI-13,In situ,52,Male,3,2,val,2026
+8248854_54_Female,8248854,WSI-396,Lepidic,54,Female,1,1,val,2026
+8540568_58_Male,8540568,WSI-318,Lepidic,58,Male,2,2,val,2026
+8396592_70_Male,8396592,WSI-89,Micropapillary,70,Male,2,2,val,2026
+8251032_49_Female,8251032,WSI-408,Micropapillary,49,Female,1,1,val,2026
+8423960_41_Female,8423960,WSI-188,Micropapillary,41,Female,2,2,val,2026
+8060308_68_Male,8060308,WSI-213,Papillary,68,Male,4,4,val,2026
+8425512_64_Female,8425512,WSI-184,Papillary,64,Female,2,2,val,2026
+8408497_66_Male,8408497,WSI-140,Papillary,66,Male,3,2,val,2026
+8532866_71_Female,8532866,WSI-292,Papillary,71,Female,3,3,val,2026
+8430989_57_Female,8430989,WSI-204,Solid,57,Female,3,3,val,2026
+8406776_60_Male,8406776,WSI-135,Solid,60,Male,2,2,val,2026
+8407538_24_Female,8407538,WSI-145,Solid,24,Female,2,2,val,2026
+8552577_70_Male,8552577,WSI-329,Acinar,70,Male,2,2,test,2026
+8534227_44_Female,8534227,WSI-304,Acinar,44,Female,4,4,test,2026
+8532614_72_Female,8532614,WSI-290,Acinar,72,Female,2,2,test,2026
+8495760_44_Male,8495760,WSI-280,Acinar,44,Male,2,2,test,2026
+8250185_49_Male,8250185,WSI-394,Acinar,49,Male,2,2,test,2026
+8355990_69_Female,8355990,WSI-288,Acinar,69,Female,2,2,test,2026
+8280993_67_Female,8280993,WSI-116,Cribriform,67,Female,2,2,test,2026
+8375372_70_Female,8375372,WSI-16,Cribriform,70,Female,3,3,test,2026
+8435204_72_Female,8435204,WSI-228,Cribriform,72,Female,3,2,test,2026
+8385363_59_Male,8385363,WSI-57,In situ,59,Male,2,2,test,2026
+8022410_31_Female,8022410,WSI-71,In situ,31,Female,2,2,test,2026
+8377922_42_Female,8377922,WSI-25,In situ,42,Female,2,2,test,2026
+8189481_47_Female,8189481,WSI-55,In situ,47,Female,2,2,test,2026
+8229292_36_Female,8229292,WSI-359,In situ,36,Female,1,1,test,2026
+8228780_44_Female,8228780,WSI-357,In situ,44,Female,1,1,test,2026
+8251346_62_Male,8251346,WSI-406,In situ,62,Male,1,1,test,2026
+8381316_50_Female,8381316,WSI-44,In situ,50,Female,2,2,test,2026
+8337687_45_Female,8337687,WSI-67,In situ,45,Female,2,2,test,2026
+8163836_54_Male,8163836,WSI-341,Lepidic,54,Male,2,2,test,2026
+8248357_44_Male,8248357,WSI-390,Lepidic,44,Male,1,1,test,2026
+8509161_64_Female,8509161,WSI-308,Lepidic,64,Female,2,2,test,2026
+8237784_53_Female,8237784,WSI-364,Lepidic,53,Female,1,1,test,2026
+8442830_53_Male,8442830,WSI-258,Micropapillary,53,Male,3,3,test,2026
+8553258_55_Male,8553258,WSI-336,Micropapillary,55,Male,5,5,test,2026
+8393154_58_Female,8393154,WSI-83,Micropapillary,58,Female,3,3,test,2026
+8386241_43_Male,8386241,WSI-66,Micropapillary,43,Male,1,1,test,2026
+8536033_67_Male,8536033,WSI-302,Micropapillary,67,Male,2,2,test,2026
+8239884_52_Male,8239884,WSI-367,Papillary,52,Male,2,2,test,2026
+8404498_54_Male,8404498,WSI-120,Papillary,54,Male,2,2,test,2026
+8416065_70_Female,8416065,WSI-248,Papillary,70,Female,2,2,test,2026
+8449479_59_Male,8449479,WSI-271,Papillary,59,Male,2,2,test,2026
+8422802_73_Male,8422802,WSI-180,Papillary,73,Male,2,2,test,2026
+8408447_60_Female,8408447,WSI-138,Papillary,60,Female,2,2,test,2026
+8555105_48_Female,8555105,WSI-334,Papillary,48,Female,2,2,test,2026
+8424691_59_Female,8424691,WSI-182,Papillary,59,Female,2,2,test,2026
+8406914_62_Male,8406914,WSI-132,Solid,62,Male,3,3,test,2026
+8436460_66_Female,8436460,WSI-241,Solid,66,Female,3,3,test,2026
+8013888_63_Female,8013888,WSI-255,Solid,63,Female,3,3,test,2026
+8250390_49_Female,8250390,WSI-405,Solid,49,Female,1,1,test,2026
+8399864_75_Female,8399864,WSI-95,Solid,75,Female,2,2,test,2026
+8402871_46_Male,8402871,WSI-100,Solid,46,Male,3,3,test,2026

@@ -1,197 +1,313 @@
-# Build an Agent for Foundation-Model Fusion in Lung Cancer Subtyping
+# Pathology Foundation Models Fusion Agent
 
-* **Time box:** part-time (target ~15–30 hours of focused work)
-* **Deliverable:** a reproducible repository + a short technical report
-
----
-
-## Objective
-
-Predict the **histologic growth pattern (tumor subtype)** of lung adenocarcinoma from whole-slide images (WSIs), by combining embeddings from **three different pathology foundation models** with patient metadata (age, sex).
-
-> **Note: The fused model must outperform every single-foundation-model baseline** on the held-out test set, under an identical split.
-
-A submission that reports a strong fused number without the single-model baselines to compare against cannot be scored.
+This is a guide for reproducing the entire data curation, tiling, feature extraction, autonomous agent fusion search, and evaluation benchmark across all experimental seeds (`42`, `1337`, `2026`).
+(Note: the original `README.md` file is moved to `artifacts/README.md`.)
 
 ---
 
-## Dataset
-
-**Source:** [`kmmuleelab/Lung_Pathology_Image_JPG`](https://huggingface.co/datasets/kmmuleelab/Lung_Pathology_Image_JPG) (public, Hugging Face)
-**Reference publication:** [www.nature.com/articles/s41597-026-06906-z](https://www.nature.com/articles/s41597-026-06906-z)
-
-| Property           | Value                                |
-| ------------------ | ------------------------------------ |
-| Whole-slide images | 408                                  |
-| Patients           | 210                                  |
-| Slides per patient | 1–5 (median 2)                      |
-| Scan magnification | 80×                                 |
-| Format             | JPG                                  |
-| Disease            | Lung adenocarcinoma                  |
-| Label              | Histologic growth pattern, 7 classes |
-
-### Patient metadata — `CLWD.csv`
-
-| Column                     | Type        | Notes                                                                 |
-| -------------------------- | ----------- | --------------------------------------------------------------------- |
-| `SampleNumber`           | str         | Patient / specimen identifier.**Use this as the grouping key.** |
-| `WSI_ID`                 | str         | Slide identifier,`WSI-<n>`; joins to the image files                |
-| `Sex`                    | categorical | `Female` (130 patients) / `Male` (79 patients)                    |
-| `Age`                    | int         | Range 24–80, mean 55.2, median 55                                    |
-| `Pathological_Diagnosis` | categorical | `AIS` (n=46 patients), `MIA` (n=6), `IA` (n=157)                |
-| `Tumor Subtype`          | categorical | **Prediction target**, 7 classes                                |
-
-### Class distribution
-
-Patient-level counts (one label per patient), with metadata marginals:
-
-| Subtype        | Patients | Slides | Mean age | % Female |
-| -------------- | -------: | -----: | -------: | -------: |
-| In situ        |       46 |     80 |     47.5 |      83% |
-| Papillary      |       41 |     84 |     60.0 |      68% |
-| Acinar         |       34 |     50 |     53.7 |      68% |
-| Solid          |       29 |     69 |     56.0 |      45% |
-| Micropapillary |       26 |     64 |     56.3 |      42% |
-| Lepidic        |       19 |     30 |     57.8 |      63% |
-| Cribriform     |       15 |     31 |     63.3 |      40% |
-
-The problem is **7-class, imbalanced (3:1 head-to-tail), and small-n**. With 42 test patients, a single test patient moves balanced accuracy by roughly 2 points. Treat this as a core part of the problem, not a footnote — we care as much about how you quantify uncertainty as about the point estimate.
-
-### Known data quirks
-
-These are real properties of the released metadata. We expect you to find and handle them; how you handle them is part of the assessment.
-
-1. **`SampleNumber` is not perfectly unique.** There are 209 distinct values for 210 patients — ID `8377886` appears twice with `Age` 68 and 69 (slides WSI-35/36 and WSI-103/104). Decide whether to treat these as one patient or two, and state the choice.
-2. **Five patients carry conflicting subtype labels across their own slides** (e.g. `8248805`: WSI-401 → Lepidic, WSI-402 → Acinar). This is clinically plausible — adenocarcinoma is heterogeneous and multiple patterns coexist. Define and justify a patient-level label policy (dominant pattern, per-slide labels, or exclusion).
+> [!IMPORTANT]
+> **CPU Thread Contention**: On multi-core servers, OpenMP / MKL thread pools can cause spin-lock overhead on small matrix operations. Always set thread limits when running evaluation scripts:
+> ```bash
+> export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
+> ```
 
 ---
 
-## Compute constraints and the reduced protocol
+## 1. Environment Setup
 
-We assume no institutional GPU cluster. **Free Colab or Kaggle GPU is sufficient** for the intended scope.
+### 1.1 Hardware Requirements
+- **OS**: Linux (tested on Ubuntu 22.04 LTS / x86_64)
+- **GPU**: NVIDIA GPU with >= 12 GB VRAM (e.g., RTX 3090, A5000, A100, V100, or Colab T4/A100)
+- **Disk Space**: 386 GB for original WSI JPGs, ~5 GB for cached FP16 tile and slide embeddings
 
-To keep the task tractable, work on the reduced subset:
+### 1.2 Installation Options
 
-- **One slide per patient** → 210 images (state your selection rule; a deterministic rule such as lowest `WSI_ID` per patient is fine)
-- **Downsample 80× → 20×** (4× linear downsample) before tiling
-- Cache embeddings to disk once; never re-run a foundation model inside a hyperparameter loop
+#### Option A: Quick Install via `requirements.txt` (Standard `pip`)
+```bash
+# 1. Create a virtual environment with Python 3.10+
+python3 -m venv .env_path_agent
+source .env_path_agent/bin/activate
 
-Using the full 408-slide set or higher magnification is welcome but **not** required and earns no extra credit by itself. If you do, keep the reduced-protocol run as the headline result so submissions stay comparable.
+# 2. Install PyTorch with your system's CUDA version (e.g., CUDA 12.4 was used for this task)
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 
----
+# 3. Install core dependencies
+pip install -r requirements.txt
 
-## Tasks
+# 4. Verify GPU access
+python -c "import torch; print('PyTorch:', torch.__version__, 'CUDA available:', torch.cuda.is_available(), 'Device:', torch.cuda.get_device_name(0))"
+```
 
-### Step 1 — Feature extraction with three foundation models
+#### Option B: Fast Install via `uv` (Recommended)
+```bash
+# 1. Create the dedicated virtual environment with Python 3.10
+uv venv .env_path_agent --python /usr/bin/python3.10
+export UV_LINK_MODE=copy
 
-Extract slide-level embeddings using **three distinct pathology foundation models**. Suggested:
+# 2. Install PyTorch with CUDA 12.4 wheels
+uv pip install --python .env_path_agent/bin/python torch torchvision --index-url https://download.pytorch.org/whl/cu124
 
-- [UNI2-h](https://huggingface.co/MahmoodLab/UNI2-h) (Mahmood Lab)
-- [Virchow2](https://huggingface.co/paige-ai/Virchow2) (Paige AI)
-- [Prism2](https://huggingface.co/paige-ai/Prism2) (Paige AI)
+# 3. Install dependencies from requirements.txt
+uv pip install --python .env_path_agent/bin/python -r requirements.txt
 
-Any three are acceptable — see the [THUNDER leaderboard](https://mics-lab.github.io/thunder/leaderboards/) for alternatives. Several of these are gated on Hugging Face; request access early, as approval can take a day or more.
+# 4. Verify GPU access
+.env_path_agent/bin/python -c "import torch; print('PyTorch:', torch.__version__, 'CUDA available:', torch.cuda.is_available(), 'Device:', torch.cuda.get_device_name(0))"
+```
 
-Expected in your write-up:
+### 1.3 Foundation Model Credentials & Access Links
+The project leverages state-of-the-art pathology foundation models hosted on Hugging Face:
 
-- Tissue segmentation / background rejection, tiling strategy, tile size and stride at 20×
-- Per-model preprocessing (each has its own normalization and input resolution — do not share one transform blindly)
-- **Tile → slide aggregation**: mean pooling, attention-based (ABMIL-style), or the model's own slide encoder where one exists (Prism2 provides one; UNI2 and Virchow2 are tile encoders). Justify the choice.
-- Embedding dimensionality per model, wall-clock cost, and where artifacts are cached
+1. **UNI2-h** (`MahmoodLab/UNI2-h`): ViT-H/14 with SwiGLU, 1536-d ([Hugging Face](https://huggingface.co/MahmoodLab/UNI2-h)). Gated access.
+2. **Virchow2** (`paige-ai/Virchow2`): ViT-H/14 with SwiGLU, 2560-d ([Hugging Face](https://huggingface.co/paige-ai/Virchow2)). Gated access.
+3. **Prov-GigaPath** (`prov-gigapath/prov-gigapath`): ViT-Giant/14 (1.3B params), 1536-d ([Hugging Face](https://huggingface.co/prov-gigapath/prov-gigapath)). Instant gated access.
+4. **Prism2** (`paige-ai/Prism2`): Multimodal Clinical VLM (Perceiver Resampler + Phi-3 3.8B LLM decoder, 3072-d diagnostic state) ([Hugging Face](https://huggingface.co/paige-ai/Prism2)).
 
-### Step 2 — Agent system for fusion-strategy search
+Set your Hugging Face authentication token:
+```bash
+export HF_TOKEN="your_huggingface_access_token"
+# Or run: huggingface-cli login
+```
 
-Build an **agent system** that autonomously explores how to integrate the three embedding sets, rather than hand-tuning one pipeline.
-
-Minimum viable scope:
-
-- **A search space** spanning at least: early fusion (concatenation, with and without per-model L2 normalization or dimensionality reduction), late fusion (probability/logit averaging, weighted vote, stacking), and one intermediate/learned scheme (gated fusion, attention over model streams, or bilinear/cross-attention pooling)
-- **An agent loop** that proposes a configuration, evaluates it, reads the result, and conditions its next proposal on what it has seen — logging its reasoning at each step
-- **A stopping criterion and a trial budget**, both explicit
-- **A decision log**: what was tried, the validation score, and why the next move was chosen
-
-Implementation is open — an LLM-driven loop (tool-calling agent that writes/edits configs), or a structured search agent, or a hybrid. What we assess is whether the exploration is *principled and auditable*, not whether it is fashionable. If you use an LLM, keep API keys in the environment and out of the repo, and make the system degrade gracefully to a deterministic search when no key is present.
-
-**Guardrail — the failure mode we look for:** with 21 validation patients, an agent running 200 unguided trials will overfit the validation set and the gain will not survive to test. Show that you thought about this (nested/repeated CV, a trial budget, selection-noise estimates, or a validation-variance-aware acceptance rule).
-
-Note:`Age` and `Sex` must enter the pipeline. Both are required, and both are weak-but-real signals (see §2.2 — In situ patients are ~10 years younger and 83% female).
-
----
-
-## Evaluation protocol
-
-### Data Splits
-
-| Split      | Fraction | Patients (of 210) |
-| ---------- | -------: | ----------------: |
-| Train      |      70% |              ~146 |
-| Validation |      10% |               ~21 |
-| Test       |      20% |               ~42 |
-
-Mandatory:
-
-- **Split at the patient level, by `SampleNumber`.** No patient may contribute slides to more than one split. A random slide-level split is the single most common disqualifying error on this task.
-- **Stratify by subtype.** With Cribriform at 15 patients, an unstratified split can leave a class absent from validation.
-- **Fix and commit the split.** Save the patient-ID → split assignment as a versioned artifact so every model and every agent trial is scored on exactly the same partition.
-- **Touch the test set once.** All selection — fusion strategy, hyperparameters, aggregation, agent trials — uses train/validation only.
-- **Seed everything** and report the seed.
-
-### Metrics
-
-Primary:
-
-- **AUROC**, macro-averaged one-vs-rest (report per-class AUROC as well)
-- **Balanced accuracy**
-
-Also report:
-
-- Confusion matrix on the test set
-- **Uncertainty on the primary metrics** — bootstrap CIs over test patients, and/or mean ± sd across ≥3 seeds or repeated splits. A number without a spread is not interpretable at n=42.
-
-### 5.3 Required comparison table
-
-| Configuration                               | Macro AUROC | Balanced acc. |
-| ------------------------------------------- | ----------- | ------------- |
-| Metadata only (age + sex)                   |             |               |
-| Foundation model A alone                    |             |               |
-| Foundation model B alone                    |             |               |
-| Foundation model C alone                    |             |               |
-| Best single model + metadata                |             |               |
-| **Fused (agent-selected) + metadata** |             |               |
-
-Keep the downstream classifier family and tuning budget identical across rows, so the comparison isolates the fusion effect rather than the tuning effort.
+*(Optional) Flash-Attention for Prism2*:
+```bash
+uv pip install --python .env_path_agent/bin/python "https://github.com/Dao-AILab/flash-attention/releases/download/v2.7.4.post1/flash_attn-2.7.4.post1%2Bcu12torch2.6cxx11abiFALSE-cp310-cp310-linux_x86_64.whl"
+```
 
 ---
 
-## Deliverables
+## 2. Dataset Configuration & Canonical Paths
 
-1. **Repository** — runnable end-to-end, with pinned dependencies (`uv`/`pip` lockfile or `requirements.txt`) and a documented entry point per stage. Suggested layout:
+### 2.1 Quickstart via Shared Precomputed Artifacts (`artifacts.tar.gz`)
 
-   ```
-   conf/                 # configuration (Hydra or equivalent)
-   src/
-     data/               # subset selection, tiling, splits
-     embeddings/         # one module per foundation model
-     fusion/             # fusion strategies, registered by name
-     agent/              # search loop, decision logging
-     eval/               # metrics, bootstrap CIs, plots
-   scripts/              # stage entry points
-   notebooks/            # Colab/Kaggle runnable versions
-   artifacts/            # splits, cached embeddings (gitignored), logs
-   report.md
-   ```
-2. **Technical report** (≤ 6 pages, Markdown or PDF) covering: pipeline design, the three models and why; the agent's search space and decision policy; the results table from §5.3 with uncertainty; how the data quirks in §2.3 were handled; failure analysis of the confusion matrix; and what you would do with 10× the compute.
+For rapid reproduction without downloading raw WSIs and running feature extraction, the precomputed artifact bundle `artifacts.tar.gz` is shared. It contains precomputed slide embeddings (`artifacts/features/`), curated patient cohorts (`artifacts/curated_patients.csv`), frozen zero-leakage splits for all 3 seeds (`artifacts/splits/`), and other generated artifacts.
 
-Note: AI tools (codex, claude code) are encouraged to be used for coding, but please don't directly use AI to write the technical report.
+To unpack `artifacts.tar.gz`:
+
+```bash
+cd artifacts/
+# Unpack the tarball
+tar -xzvf /path/to/artifacts.tar.gz
+```
+
+*Verification*:
+Ensure that `artifacts/features/` contains `uni2_slide_*.pt`, `virchow2_slide_*.pt`, `gigapath_slide_*.pt`, `prism2_diag_slide.pt` and `artifacts/curated_patients.csv`. With this, "3. Phase 1 (Data Audit, Tiling & Feature Extraction)" can be skipped and "4. Phase 2 (Autonomous Agent Fusion Search)" can be run directly.
+
+### 2.2 Canonical Paths & Raw WSI Configuration
+
+The pipeline resolves the raw image directory via the `LUNG_DATA_DIR` environment variable, falling back to `./data/Lung_Pathology_Image_JPG` or `~/Lung_Pathology_Image_JPG`:
+```bash
+# Export the path to your raw WSI JPG files:
+export LUNG_DATA_DIR="/path/to/your/Lung_Pathology_Image_JPG"
+```
+
+Directory Structure:
+- **Raw WSI JPGs**: `$LUNG_DATA_DIR`
+- **Clinical Metadata**: `artifacts/CLWD.csv` (Source metadata)
+- **Curated Metadata**: `artifacts/curated_patients.csv` (Audited 204-patient cohort)
+- **Frozen Split Partitions**: `artifacts/splits/splits_seed_{42,1337,2026}.json`
+- **Extracted Feature Caches**: `artifacts/features/` (Tile embeddings in FP16, slide vectors in FP32)
+- **Tiling QC Overlays**: `artifacts/tiling_qc/` (visualization of tiling)
+- **Evaluation Figures**: `artifacts/figures/` (visualization of results)
 
 ---
 
-## Assessment rubric
+## 3. Data Audit, Tiling & Foundation Feature Extraction (Phase 1)
 
-| Weight | Dimension                           | What earns credit                                                                                                                    |
-| -----: | ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-|    15% | **Experimental rigor**        | Patient-level stratified splits, single test-set use, seeded runs, honest uncertainty, identical budgets across compared rows        |
-|    25% | **Agent system design**       | A real search space, a genuine feedback loop, an auditable decision log, and explicit defenses against validation overfitting        |
-|    20% | **Foundation-model handling** | Correct per-model preprocessing, sound tile→slide aggregation, sensible tiling at 20×, efficient caching                           |
-|    20% | **Results and analysis**      | Does fusion beat every single model, and is the claim supported? Quality of failure analysis matters more than the size of the delta |
-|    20% | **Engineering quality**       | Reproducibility, config-driven code, typed and documented modules, clean modular layout, no secrets in the repo                      |
+Convenience bash scripts execute each stage deterministically:
+
+### Step 1.1: Formal Data Audit & Cohort Curation (210 -> 204 Patients)
+Audits the raw downloaded dataset against `artifacts/CLWD.csv`.
+
+**Critical Data Audit Finding**:
+Out of the 408 whole-slide image entries indexed in `CLWD.csv`, **22 image files are missing from the public Hugging Face repository download** (`kmmuleelab/Lung_Pathology_Image_JPG`). For **6 patients**, all associated slide images were completely omitted from the release:
+- `8219606_75_Female` (slide WSI-343, Lepidic)
+- `8221926_65_Male` (slide WSI-344, Lepidic)
+- `8226738_42_Female` (slide WSI-351, Acinar)
+- `8238589_51_Female` (slide WSI-365, Acinar)
+- `8243660_65_Female` (slide WSI-376, Acinar)
+- `8388318_57_Male` (slides WSI-78, WSI-79, Papillary)
+
+Because these 6 patients have zero accessible images on disk, the curated cohort consists of the remaining **204 patients** (386 slides available on disk). Selecting the lowest available `WSI_ID` per patient under the 1-slide-per-patient protocol yields a frozen, verified cohort of exactly **204 whole-slide images (204 patients)** with 100% complete data on disk:
+```bash
+./scripts/run_01_data_audit.sh
+```
+*Output*: `artifacts/curated_patients.csv` (204 patients, 100% on disk)
+
+### Step 1.2: Multi-Seed Stratified Splitting
+Generates patient-level stratified 70/10/20 train/val/test partitions across seeds `42`, `1337`, and `2026`:
+```bash
+./scripts/run_02_generate_splits.sh
+```
+*Outputs*: `artifacts/splits/splits_seed_*.json` and `.csv`.
+
+### Step 1.3: 20× Tiling & Background Rejection
+Downsamples 80× slides by 4× to 20× equivalent, performs dual-criterion tissue segmentation (luminance < 220 & color-variance > 5), and extracts non-overlapping $224 \times 224$ tiles:
+```bash
+./scripts/run_03_tile_wsi.sh
+```
+*Outputs*: `artifacts/tiles_metadata.json` (398,649 valid tiles) and QC overlays in `artifacts/tiling_qc/`.
+
+### Step 1.4: Foundation Model Feature Extraction
+Extracts tile embeddings with model-specific normalizations and caches them in FP16:
+```bash
+# UNI2-h (1536-d)
+./scripts/run_04_extract_embeddings.sh uni2
+
+# Virchow2 (2560-d)
+./scripts/run_04_extract_embeddings.sh virchow2
+
+# Prov-GigaPath (1536-d)
+./scripts/run_04_extract_embeddings.sh gigapath
+```
+*Master Script*: Run all Phase 1 steps end-to-end:
+```bash
+./scripts/run_all_phase1.sh
+```
+
+### Step 1.5: Prism2 Multimodal Feature Extraction (for Quad-model fusion only)
+Extracts Perceiver Resampler and Phi-3 VLM diagnostic embeddings from cached Virchow2 tile representations:
+```bash
+# Extract Prism2 Base (2560-d), Latents Mean (2560-d), and VLM Diagnostic (3072-d):
+.env_path_agent/bin/python scripts/extract_prism2_embeddings.py
+```
+*Outputs*: `artifacts/features/prism2_diag_slide.pt`, `artifacts/features/prism2_base_slide.pt`, `artifacts/features/prism2_latents_mean_slide.pt`
+
+---
+
+## 4. Autonomous Agent Fusion Search (Phase 2)
+
+The search engine supports 5 generations of autonomous agents (`v1` to `v5`):
+- **`v1` (Sequential Agent)**: Fixed sequential exploration (T01–T12) across Early/Late/Intermediate followed by greedy parameter exploitation (T13–T25) under paired 1.0-SE guardrails.
+- **`v2` (Exploitation Agent)**: Representation-capacity-first search prioritizing multi-resolution concat `[mean; max]` pooling before parameter exploitation.
+- **`v3` (Hierarchical Agent)**: Decoupled 3-stage search (Stage 1: pooling isolation -> Stage 2: fusion topology exploration -> Stage 3: 15-fold cross-seed stability utility selection).
+- **`v4` (Autonomous Agent - Default Champion)**: Hypothesis-driven search conditioned on complete trial history, domain pathology insights, and paired 1.0-SE guardrail early stopping.
+- **`v5` (Unified Agent)**: Unified statistical pooling screen -> closed-loop autonomous reasoning -> 15-fold stability gating.
+
+### Step 4.1: Running Agent Search for Tri-Model and Quad-Model Fusion
+
+The following commands run the autonomous search for any agent type (`v1` to `v5`, e.g., champion `v4`) for either **Tri-Model Vision Fusion** (`UNI2` + `Virchow2` + `Prov-GigaPath`), **Multimodal Quad-Model Fusion** (+ `Prism2 VLM`), or **Both**:
+
+#### A. Tri-Model Vision Fusion Search:
+```bash
+# Run 25-trial autonomous agent search (e.g. v4) on Tri-Model vision streams (Seed 42):
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality tri --seed 42
+```
+
+#### B. Quad-Model (+ Prism2 VLM) Fusion Search:
+```bash
+# Run agent search evaluating both Tri-Model and Quad-Model (+ Prism2 VLM):
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality quad --seed 42
+```
+
+#### C. Full Comparison (Both tri-model and quad-model):
+```bash
+# Evaluate Tri-Model and Quad-Model side-by-side with 1,000 bootstrap CIs (Seed 42):
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality both --seed 42
+```
+
+*Outputs*:
+- `artifacts/results/agent_decision_log_seed_42.json`: Auditable decision log conditioning proposals on fold performance.
+- `artifacts/results/agent_search_summary_seed_42.md`: Step-by-step hypothesis, reasoning, and adoption summary.
+- `artifacts/results/phase2_comparison_table_seed_42.md`: Baseline vs. Tri-Model & Quad-Model champion comparison table with 1,000-sample bootstrap 95% CIs.
+
+### Step 4.2: Multi-Seed Repeatability Verification (Seeds 42, 1337, 2026)
+Executes independent end-to-end searches and evaluations across all 3 seeds with zero cross-seed contamination:
+```bash
+# Run full 3-seed evaluation for any agent version (v1 to v5, say v4) across both modalities:
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality both --all-seeds
+```
+*Outputs*:
+- `artifacts/results/phase2_multi_seed_comparison.md`: Multi-seed evaluation reporting Mean ± SD.
+- `artifacts/results/phase2_multi_seed_comparison.json`: Machine-readable results.
+
+Convenience shell wrappers (supports positional or flagged arguments: `--seed`, `--agent`, `--output-dir`):
+```bash
+# Single-seed execution (default: seed 42, agent v4, output: artifacts/results):
+./scripts/run_phase2.sh
+# Single-seed execution with options (e.g. agent v4, seed 1337):
+./scripts/run_phase2.sh --seed 1337 --agent v4 --output-dir artifacts/results/seed1337_v4
+# Example with short options (e.g. agent v4):
+./scripts/run_phase2.sh -s 1337 -a v4 -o artifacts/results/seed1337_v4
+
+# Full multi-seed execution across seeds 42, 1337, 2026 (default: agent v4, output: artifacts/results):
+./scripts/run_all_phase2.sh
+# Full multi-seed execution with options (e.g. agent v4, output: artifacts/results/all_seeds_v4):
+./scripts/run_all_phase2.sh --agent v4 --output-dir artifacts/results/all_seeds_v4
+# Example with short options (e.g. agent v4):
+./scripts/run_all_phase2.sh -a v4 -o artifacts/results/all_seeds_v4
+```
+
+### Step 4.3: Multimodal Vision-Language Representation Benchmark (Optional)
+Evaluates Triad vs. Quad-Model Fusion across all 3 seeds:
+```bash
+.env_path_agent/bin/python scripts/compare_prism2_representations.py --mode both
+```
+*Output*: `artifacts/results/prism2_benchmark_3seeds.json`
+
+---
+
+## 5. Main Benchmark Reproduction
+
+Runs the master evaluation across all 3 seeds, reproducing the main results tables:
+
+```bash
+OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
+.env_path_agent/bin/python scripts/eval_3seeds_comparison.py --mode both
+```
+
+
+### 5.1: Ablation Study of Agent Search Architectures
+
+To evaluate the comparative impact of different autonomous search paradigms, run the 5-paradigm agent architecture ablation study:
+
+```bash
+OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
+.env_path_agent/bin/python scripts/run_agent_search_ablation.py --seeds 42 1337 2026
+```
+
+### Step 5.2: Generate All Evaluation Figures & Failure Analysis Tables
+Renders publication-quality figures and per-class statistical tables (reads directly from `artifacts/results/` by default, or an explicit results folder):
+```bash
+.env_path_agent/bin/python scripts/generate_evaluation_figures.py
+# Or specify custom results and output directories:
+# .env_path_agent/bin/python scripts/generate_evaluation_figures.py --results-dir artifacts/results --output-dir artifacts/figures
+```
+*Generated Deliverables in `artifacts/figures/`*:
+1. `confusion_matrix_quad_fusion.png`: Raw counts and row-normalized recall heatmap for Quad-Model Fusion on test cohort.
+2. `confusion_matrix_tri_fusion.png`: Confusion matrix for Tri-Model Vision Fusion.
+3. `per_class_auroc_comparison.png`: Grouped bar chart comparing all 7 subtypes across single models and fusion champions.
+4. `roc_curves_multiclass.png`: Multi-class One-vs-Rest ROC curves with macro-average.
+5. `calibration_impact.png`: Subtype recall before and after prior-shift adjustment ($\tau=0.4$).
+6. `fusion_performance_summary.png`: Summary bar charts of AUROC and Balanced Accuracy with standard deviation error bars.
+7. `artifacts/per_class_auroc_breakdown.md`: Complete numerical per-class AUROC table across all models and seeds.
+
+---
+
+## 6. Repository Layout
+
+```
+Pathology-FoundationModels-Fusion-Agent/
+├── conf/
+│   ├── agent.yaml           # Search agent hyperparameters & guardrails
+│   ├── embeddings.yaml      # Foundation models and concat_mean_max pooling
+│   ├── fusion.yaml          # Search spaces for Early, Late, and Intermediate fusion
+│   └── data.yaml            # Dataset paths, cohort size (204), and magnification settings
+├── src/
+│   ├── agent/               # Autonomous search engines (v1–v5)
+│   ├── fusion/              # Multimodal fusion models (Late, Early, StreamABMIL)
+│   ├── embeddings/          # Model-specific feature extraction logic
+│   └── eval/                # Bootstrap CIs, AUROC, and calibration metrics
+├── scripts/
+│   ├── 05_run_phase2_fusion_agent.py              # Autonomous agent search & multi-seed verification runner
+│   ├── eval_3seeds_comparison.py                  # Master evaluation script (Main results table)
+│   ├── run_agent_search_ablation.py               # 5-paradigm agent ablation runner
+│   └── generate_evaluation_figures.py             # ROC, confusion matrix, and other analysis generator
+├── artifacts/
+│   ├── splits/              # Frozen, zero-leakage patient-level splits (seeds 42, 1337, 2026)
+│   ├── features/            # Precomputed FP16 slide-level embeddings
+│   ├── figures/             # High-resolution PNG figures & confusion matrices
+│   └── results/             # Machine-readable JSON logs for agent search trials
+├── REPRODUCIBILITY.md       # This reproducibility guide
+└── README.md                # Challenge task description and rubric
+```
+
