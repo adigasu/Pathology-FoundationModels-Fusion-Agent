@@ -1,0 +1,66 @@
+{
+  "seed": 2026,
+  "agent_version": "v5",
+  "search_duration_sec": 59.620243072509766,
+  "total_trials_run": 13,
+  "accepted_trials_count": 1,
+  "champion_trial": "T12",
+  "champion_cv_auroc": 0.8350136262064772,
+  "champion_pooling": "max",
+  "champion_family": "late",
+  "champion_params": {
+    "strategy": "uniform",
+    "c": 1.0,
+    "use_metadata": true
+  },
+  "test_eval": {
+    "tri_vision": {
+      "macro_auroc": {
+        "value": 0.8919925479136006,
+        "ci_lower": 0.810902951900851,
+        "ci_upper": 0.9533975128813766,
+        "ci_str": "[0.811, 0.953]"
+      },
+      "balanced_acc": {
+        "value": 0.6253968253968253,
+        "ci_lower": 0.461542168149311,
+        "ci_upper": 0.7907245284477427,
+        "ci_str": "[0.462, 0.791]"
+      },
+      "balanced_acc_adj": 0.653968253968254,
+      "per_class_auroc": {
+        "Acinar": 0.7571428571428571,
+        "Cribriform": 0.9912280701754386,
+        "In situ": 0.9652777777777778,
+        "Lepidic": 0.7702702702702703,
+        "Micropapillary": 0.9611111111111111,
+        "Papillary": 0.856060606060606,
+        "Solid": 0.9428571428571428
+      }
+    },
+    "quad_multimodal": {
+      "macro_auroc": {
+        "value": 0.9117421896557235,
+        "ci_lower": 0.8452595981494864,
+        "ci_upper": 0.9616073359202615,
+        "ci_str": "[0.845, 0.962]"
+      },
+      "balanced_acc": {
+        "value": 0.6234126984126984,
+        "ci_lower": 0.4708801020408163,
+        "ci_upper": 0.7678571428571429,
+        "ci_str": "[0.471, 0.768]"
+      },
+      "balanced_acc_adj": 0.6638888888888889,
+      "per_class_auroc": {
+        "Acinar": 0.7857142857142857,
+        "Cribriform": 0.9824561403508772,
+        "In situ": 0.9791666666666666,
+        "Lepidic": 0.8243243243243245,
+        "Micropapillary": 0.9555555555555556,
+        "Papillary": 0.8787878787878787,
+        "Solid": 0.9761904761904762
+      }
+    }
+  }
+}

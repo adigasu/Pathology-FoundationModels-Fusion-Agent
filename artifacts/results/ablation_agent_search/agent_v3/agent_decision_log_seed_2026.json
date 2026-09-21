@@ -1,0 +1,398 @@
+{
+  "seed": 2026,
+  "agent_version": "v3_hierarchical_stability",
+  "winning_pooling": "max",
+  "total_trials_run": 16,
+  "champion": {
+    "trial": "T16",
+    "config": {
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "tau": 1.2,
+        "c": 1.0,
+        "use_metadata": true
+      }
+    },
+    "mean_auroc": 0.834644583878212,
+    "stability_utility": 0.8262821975348332,
+    "grand_se": 0.008362386343378813,
+    "pooling": "max",
+    "gamma_meta": 1.0
+  },
+  "trials": [
+    {
+      "trial": "T01",
+      "stage": "Stage 1 (Pooling)",
+      "hypothesis": "Spatial mean pooling across all tiles",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "mean",
+      "mean_cv_auroc": 0.8255509932554002,
+      "fold_cv_aurocs": [
+        0.8369317081386046,
+        0.8031285900744028,
+        0.8741766056666211,
+        0.7842602917972376,
+        0.8292577706001351
+      ],
+      "fold_std": 0.03433437506064742,
+      "time_sec": 2.3266992568969727
+    },
+    {
+      "trial": "T02",
+      "stage": "Stage 1 (Pooling)",
+      "hypothesis": "Element-wise max pooling across all tiles",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.8449872034493042,
+      "fold_cv_aurocs": [
+        0.8382318338475975,
+        0.8115396644953294,
+        0.8904810669787627,
+        0.8281039043970079,
+        0.8565795475278234
+      ],
+      "fold_std": 0.03022206448728465,
+      "time_sec": 3.185255289077759
+    },
+    {
+      "trial": "T03",
+      "stage": "Stage 1 (Pooling)",
+      "hypothesis": "Top-5% norm tile mean pooling",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "top5",
+      "mean_cv_auroc": 0.7819969177140639,
+      "fold_cv_aurocs": [
+        0.7681750542834287,
+        0.7650086913633711,
+        0.798959148037489,
+        0.8140535786964359,
+        0.7637881161895941
+      ],
+      "fold_std": 0.02305727090897084,
+      "time_sec": 2.687246084213257
+    },
+    {
+      "trial": "T04",
+      "stage": "Stage 1 (Pooling)",
+      "hypothesis": "Top-10% norm tile mean pooling",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "top10",
+      "mean_cv_auroc": 0.7957919246259995,
+      "fold_cv_aurocs": [
+        0.7970586501620984,
+        0.7734426219647894,
+        0.8095445659193737,
+        0.8089714367916339,
+        0.789942348292102
+      ],
+      "fold_std": 0.014984559968352405,
+      "time_sec": 2.653505802154541
+    },
+    {
+      "trial": "T05",
+      "stage": "Stage 1 (Pooling)",
+      "hypothesis": "Top-20% norm tile mean pooling",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "top20",
+      "mean_cv_auroc": 0.8024433016030823,
+      "fold_cv_aurocs": [
+        0.8170143512754351,
+        0.7692229500111273,
+        0.8209350131009118,
+        0.8001277540193795,
+        0.8049164396085577
+      ],
+      "fold_std": 0.02042871027973106,
+      "time_sec": 2.6343979835510254
+    },
+    {
+      "trial": "T06",
+      "stage": "Stage 1 (Pooling)",
+      "hypothesis": "Concatenated [mean; max] multi-resolution pooling",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "concat",
+      "mean_cv_auroc": 0.8409195272194105,
+      "fold_cv_aurocs": [
+        0.8499858953307229,
+        0.8298757345555375,
+        0.8762229862076252,
+        0.8107598727672619,
+        0.8377531472359058
+      ],
+      "fold_std": 0.024341986990270216,
+      "time_sec": 6.080308198928833
+    },
+    {
+      "trial": "T07",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Early concatenation of raw stream vectors",
+      "family": "early",
+      "params": {
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.8232392159066771,
+      "fold_cv_aurocs": [
+        0.812458362655407,
+        0.8084432535171452,
+        0.8638155381626963,
+        0.7974537713700275,
+        0.8340251538281096
+      ],
+      "fold_std": 0.026281223499296083,
+      "time_sec": 3.391798734664917
+    },
+    {
+      "trial": "T08",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Per-stream L2-normalization before concatenation",
+      "family": "early",
+      "params": {
+        "l2_norm_per_stream": true,
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.8232392159066771,
+      "fold_cv_aurocs": [
+        0.812458362655407,
+        0.8084432535171452,
+        0.8638155381626963,
+        0.7974537713700275,
+        0.8340251538281096
+      ],
+      "fold_std": 0.026281223499296083,
+      "time_sec": 3.499835252761841
+    },
+    {
+      "trial": "T09",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Train-set PCA (256-d, 95% variance) dimensionality reduction",
+      "family": "early",
+      "params": {
+        "pca_dim": 256,
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.842640205312831,
+      "fold_cv_aurocs": [
+        0.8051638126514974,
+        0.8345555375112026,
+        0.8899670023325937,
+        0.8342325586291104,
+        0.849282115439751
+      ],
+      "fold_std": 0.030921154043030676,
+      "time_sec": 0.3580210208892822
+    },
+    {
+      "trial": "T10",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Uniform probability soft voting ensemble",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.8449872034493042,
+      "fold_cv_aurocs": [
+        0.8382318338475975,
+        0.8115396644953294,
+        0.8904810669787627,
+        0.8281039043970079,
+        0.8565795475278234
+      ],
+      "fold_std": 0.03022206448728465,
+      "time_sec": 3.4860708713531494
+    },
+    {
+      "trial": "T11",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Temperature-scaled calibrated soft voting",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "tau": 1.5,
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.8439104228408482,
+      "fold_cv_aurocs": [
+        0.8379815887451355,
+        0.8193173821252638,
+        0.8854444525719487,
+        0.8303992413352018,
+        0.8464094494266907
+      ],
+      "fold_std": 0.025267773500212108,
+      "time_sec": 3.5039899349212646
+    },
+    {
+      "trial": "T12",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Calibrated temperature soft voting (tau=1.2)",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "tau": 1.2,
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.8444665266256717,
+      "fold_cv_aurocs": [
+        0.8364117300324196,
+        0.8189267218823869,
+        0.8915014751420282,
+        0.8277333886693493,
+        0.8477593174021746
+      ],
+      "fold_std": 0.028373791310746698,
+      "time_sec": 3.819361448287964
+    },
+    {
+      "trial": "T13",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Validation simplex-constrained convex weighting",
+      "family": "late",
+      "params": {
+        "strategy": "simplex",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.8067148692884961,
+      "fold_cv_aurocs": [
+        0.8072212899306495,
+        0.7920246967044997,
+        0.8543685335544016,
+        0.7662824472553538,
+        0.813677378997576
+      ],
+      "fold_std": 0.032288491151249224,
+      "time_sec": 3.5470468997955322
+    },
+    {
+      "trial": "T14",
+      "stage": "Stage 2 (Fusion)",
+      "hypothesis": "Stream-level Gated Fusion neural network",
+      "family": "intermediate",
+      "params": {
+        "strategy": "gated",
+        "hidden_dim": 256,
+        "dropout": 0.2,
+        "epochs": 25,
+        "lr": 0.001,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "mean_cv_auroc": 0.7518556438284444,
+      "fold_cv_aurocs": [
+        0.7871911558611064,
+        0.7262533306868281,
+        0.7220044051073237,
+        0.7612908679534297,
+        0.7625384595335335
+      ],
+      "fold_std": 0.02737845552471288,
+      "time_sec": 1.046677827835083
+    },
+    {
+      "trial": "T15",
+      "stage": "Stage 3 (Stability)",
+      "finalist_index": 1,
+      "hypothesis": "Multi-seed stability: Uniform probability soft voting ensemble",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "seed_means": [
+        0.8373074622475809,
+        0.8227462129225463,
+        0.8449872034493042
+      ],
+      "grand_mean_auroc": 0.8350136262064772,
+      "grand_std": 0.035058400723798906,
+      "grand_se": 0.009052040143195947,
+      "stability_utility": 0.8259615860632813,
+      "mean_cv_auroc": 0.8350136262064772,
+      "fold_cv_aurocs": [
+        0.9056869226494207,
+        0.8671419682913936,
+        0.8154598001888642,
+        0.7878388328511481,
+        0.8104097872570779
+      ]
+    },
+    {
+      "trial": "T16",
+      "stage": "Stage 3 (Stability)",
+      "finalist_index": 2,
+      "hypothesis": "Multi-seed stability: Calibrated temperature soft voting (tau=1.2)",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "tau": 1.2,
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "seed_means": [
+        0.8338484760595307,
+        0.8256187489494338,
+        0.8444665266256717
+      ],
+      "grand_mean_auroc": 0.834644583878212,
+      "grand_std": 0.03238738304245848,
+      "grand_se": 0.008362386343378813,
+      "stability_utility": 0.8262821975348332,
+      "mean_cv_auroc": 0.834644583878212,
+      "fold_cv_aurocs": [
+        0.8974208780451167,
+        0.8496655779907012,
+        0.8084754326133636,
+        0.798683308572471,
+        0.8149971830760007
+      ]
+    }
+  ]
+}

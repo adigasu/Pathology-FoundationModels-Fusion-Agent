@@ -1,0 +1,61 @@
+{
+  "bacc_base": 58.37301587301587,
+  "bacc_adj": 60.05291005291006,
+  "subtypes": [
+    "Acinar",
+    "Cribriform",
+    "In situ",
+    "Lepidic",
+    "Micropapillary",
+    "Papillary",
+    "Solid"
+  ],
+  "recall_base": [
+    55.55555555555556,
+    55.55555555555556,
+    88.88888888888889,
+    25.0,
+    60.0,
+    62.5,
+    61.111111111111114
+  ],
+  "recall_adj": [
+    55.55555555555556,
+    55.55555555555556,
+    81.48148148148148,
+    41.66666666666667,
+    66.66666666666666,
+    58.333333333333336,
+    61.111111111111114
+  ],
+  "calibrated_balanced_acc": {
+    "Metadata only (Age + Sex)": {
+      "mean": 25.1,
+      "std": 3.4
+    },
+    "UNI2-h alone + Metadata": {
+      "mean": 60.3,
+      "std": 5.2
+    },
+    "Virchow2 alone + Metadata": {
+      "mean": 56.2,
+      "std": 2.1
+    },
+    "Prov-GigaPath alone + Metadata": {
+      "mean": 54.2,
+      "std": 3.2
+    },
+    "Prism2 VLM alone + Metadata": {
+      "mean": 49.3,
+      "std": 3.0
+    },
+    "Fused (Agent-Selected) + Metadata": {
+      "mean": 58.5,
+      "std": 1.5
+    },
+    "Quad Multimodal Late Fusion (+ Prism2 VLM) + Metadata (Champion)": {
+      "mean": 60.1,
+      "std": 1.8
+    }
+  }
+}

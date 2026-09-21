@@ -1,0 +1,236 @@
+{
+  "seed": 2026,
+  "agent_version": "v4_llm",
+  "llm_provider": "gemini",
+  "total_trials_run": 7,
+  "champion": {
+    "trial": "T02",
+    "mean_auroc": 0.8409195272194105,
+    "fold_aurocs": [
+      0.8499858953307229,
+      0.8298757345555375,
+      0.8762229862076252,
+      0.8107598727672619,
+      0.8377531472359058
+    ],
+    "pooling": "concat",
+    "gamma_meta": 1.0,
+    "config": {
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      }
+    },
+    "hypothesis": "Late uniform probability fusion allows foundation models to act as independent calibrated experts, reducing cross-stream feature interference.",
+    "reasoning": "Averaging stream posterior probabilities mitigates dimension-mismatched gradient conflict across models."
+  },
+  "trials": [
+    {
+      "trial": "T01",
+      "agent_source": "domain_reasoning_fallback",
+      "stage": "exploration",
+      "hypothesis": "Multi-resolution concat [mean; max] pooling with early feature concatenation provides complementary architectural and focal cellular cues.",
+      "reasoning": "Combining global tissue context (mean) and localized focal atypia (max) gives linear classifiers maximum discriminative signal.",
+      "family": "early",
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "params": {
+        "c": 1.0,
+        "l2_norm": false,
+        "pca_dim": null,
+        "use_metadata": true
+      },
+      "mean_cv_auroc": 0.8302575915147822,
+      "fold_aurocs": [
+        0.8384127886344636,
+        0.8195775215479648,
+        0.8627057274522711,
+        0.7935173656848534,
+        0.8370745542543572
+      ],
+      "delta_vs_champion": 0.0,
+      "se_delta": 0.0,
+      "guardrail_threshold": 0.0,
+      "decision": "ADOPT_INITIAL",
+      "reason": "Initial baseline champion established (0.8303)."
+    },
+    {
+      "trial": "T02",
+      "agent_source": "domain_reasoning_fallback",
+      "stage": "exploration",
+      "hypothesis": "Late uniform probability fusion allows foundation models to act as independent calibrated experts, reducing cross-stream feature interference.",
+      "reasoning": "Averaging stream posterior probabilities mitigates dimension-mismatched gradient conflict across models.",
+      "family": "late",
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "mean_cv_auroc": 0.8409195272194105,
+      "fold_aurocs": [
+        0.8499858953307229,
+        0.8298757345555375,
+        0.8762229862076252,
+        0.8107598727672619,
+        0.8377531472359058
+      ],
+      "delta_vs_champion": 0.010661935704628634,
+      "se_delta": 0.0027575935893898256,
+      "guardrail_threshold": 0.0027575935893898256,
+      "decision": "ADOPT_CHAMPION",
+      "reason": "Statistically meaningful improvement: Delta (+0.0107) >= 1.0*SE (0.0028)."
+    },
+    {
+      "trial": "T03",
+      "agent_source": "domain_reasoning_fallback",
+      "stage": "exploration",
+      "hypothesis": "Temperature-scaled late fusion (tau=1.5) smooths overconfident foundation model predictions and sharpens ensemble uncertainty calibration.",
+      "reasoning": "Pretrained foundation models often output peaked probabilities; softmax temperature softens overconfident margins.",
+      "family": "late",
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.5,
+        "use_metadata": true
+      },
+      "mean_cv_auroc": 0.8391278428182926,
+      "fold_aurocs": [
+        0.8416734332990491,
+        0.8283058758428217,
+        0.8721173774169166,
+        0.8133614123515601,
+        0.8401811151811154
+      ],
+      "delta_vs_champion": -0.0017916844011180767,
+      "se_delta": 0.002061915087168216,
+      "guardrail_threshold": 0.002061915087168216,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0018 (SE: 0.0021)."
+    },
+    {
+      "trial": "T04",
+      "agent_source": "domain_reasoning_fallback",
+      "stage": "exploration",
+      "hypothesis": "Non-linear intermediate gated neural fusion dynamically routes representations based on slide-level histological context.",
+      "reasoning": "Gated cross-modal routing dynamically computes feature gates per sample to upweight diagnostic features.",
+      "family": "intermediate",
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "params": {
+        "arch": "gated",
+        "pca_per_stream": null,
+        "dropout": 0.2,
+        "weight_decay": 0.001,
+        "lr": 0.01,
+        "epochs": 40,
+        "use_metadata": true
+      },
+      "mean_cv_auroc": 0.8168866285049081,
+      "fold_aurocs": [
+        0.8419607595469666,
+        0.8290520098401871,
+        0.8550307063363899,
+        0.8079511188501336,
+        0.7504385479508633
+      ],
+      "delta_vs_champion": -0.02403289871450256,
+      "se_delta": 0.01621422415143876,
+      "guardrail_threshold": 0.01621422415143876,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0240 (SE: 0.0162)."
+    },
+    {
+      "trial": "T05",
+      "agent_source": "domain_reasoning_fallback",
+      "stage": "exploitation",
+      "hypothesis": "Tune temperature scaling to tau=1.2 to retain discriminative sharp peaks while preventing overconfidence.",
+      "reasoning": "Moderate temperature scaling often hits the sweet spot between uncalibrated argmax and uniform dilution.",
+      "family": "late",
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.2,
+        "use_metadata": true
+      },
+      "mean_cv_auroc": 0.8410764225347626,
+      "fold_aurocs": [
+        0.8416908761736348,
+        0.8295374029364178,
+        0.8779110688480889,
+        0.8168349503078566,
+        0.8394078144078145
+      ],
+      "delta_vs_champion": 0.0001568953153518571,
+      "se_delta": 0.002358949384536714,
+      "guardrail_threshold": 0.002358949384536714,
+      "decision": "REJECT",
+      "reason": "Marginal gain (+0.0002) did not exceed 1.0*SE guardrail (0.0024). Rejected to avoid Winner's Curse."
+    },
+    {
+      "trial": "T06",
+      "agent_source": "domain_reasoning_fallback",
+      "stage": "exploitation",
+      "hypothesis": "Apply stronger L2 regularization shrinkage (C=0.5) to combat small-sample estimation variance.",
+      "reasoning": "With 164 patients, penalizing large weights reduces variance across stratified folds.",
+      "family": "late",
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "params": {
+        "strategy": "temperature",
+        "c": 0.5,
+        "tau": 1.5,
+        "use_metadata": true
+      },
+      "mean_cv_auroc": 0.8403021460297799,
+      "fold_aurocs": [
+        0.8415826100555164,
+        0.8272854676795564,
+        0.876462341208885,
+        0.8100024810985402,
+        0.8461778301064017
+      ],
+      "delta_vs_champion": -0.000617381189630728,
+      "se_delta": 0.0027113198138882743,
+      "guardrail_threshold": 0.0027113198138882743,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0006 (SE: 0.0027)."
+    },
+    {
+      "trial": "T07",
+      "agent_source": "domain_reasoning_fallback",
+      "stage": "exploitation",
+      "hypothesis": "Evaluate conservative temperature scaling (tau=2.0) to enforce higher ensemble consensus.",
+      "reasoning": "Tests if broader uncertainty smoothing improves generalization on difficult boundary cases.",
+      "family": "late",
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 2.0,
+        "use_metadata": true
+      },
+      "mean_cv_auroc": 0.8412668042780338,
+      "fold_aurocs": [
+        0.8496658787299182,
+        0.830494956603331,
+        0.8689313957363113,
+        0.8079291047394496,
+        0.8493126855811585
+      ],
+      "delta_vs_champion": 0.00034727705862303004,
+      "se_delta": 0.003119986424457984,
+      "guardrail_threshold": 0.003119986424457984,
+      "decision": "REJECT",
+      "reason": "Marginal gain (+0.0003) did not exceed 1.0*SE guardrail (0.0031). Rejected to avoid Winner's Curse."
+    }
+  ]
+}

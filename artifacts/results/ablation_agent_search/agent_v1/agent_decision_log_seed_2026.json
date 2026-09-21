@@ -1,0 +1,722 @@
+{
+  "seed": 2026,
+  "total_trials_run": 18,
+  "champion": {
+    "trial": "T13",
+    "config": {
+      "trial": "T13",
+      "family": "late",
+      "tier": "Exploitation (Pooling)",
+      "hypothesis": "Concatenated [mean; max] slide pooling representation",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "pooling": "concat",
+      "gamma_meta": 1.0
+    },
+    "mean_auroc": 0.8409195272194105,
+    "fold_aurocs": [
+      0.8499858953307229,
+      0.8298757345555375,
+      0.8762229862076252,
+      0.8107598727672619,
+      0.8377531472359058
+    ],
+    "pooling": "concat",
+    "gamma_meta": 1.0
+  },
+  "trials": [
+    {
+      "trial": "T01",
+      "stage": "Exploration",
+      "tier": "Early",
+      "hypothesis": "Early Concatenation (Raw 5632-d) + L2 LogReg + Metadata",
+      "family": "early",
+      "params": {
+        "c": 1.0,
+        "l2_norm": false,
+        "pca_dim": null,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8186272470097089,
+      "fold_cv_aurocs": [
+        0.8190073500664633,
+        0.8059853118966418,
+        0.864968924799954,
+        0.7811614648806767,
+        0.822013183404809
+      ],
+      "delta_vs_champion": 0.0,
+      "se_delta": 0.0,
+      "guardrail_threshold": 0.0,
+      "k_se": 1.0,
+      "paired_fold_deltas": [],
+      "decision": "INITIAL_CHAMPION",
+      "reason": "First baseline trial established as champion benchmark",
+      "champion_at_step": "T01",
+      "champion_mean_auroc": 0.8186272470097089,
+      "time_sec": 3.9792134761810303
+    },
+    {
+      "trial": "T02",
+      "stage": "Exploration",
+      "tier": "Early",
+      "hypothesis": "Per-stream L2-normalization before concatenation + Metadata",
+      "family": "early",
+      "params": {
+        "c": 1.0,
+        "l2_norm": true,
+        "pca_dim": null,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.7728351543470193,
+      "fold_cv_aurocs": [
+        0.7898360670528158,
+        0.7357681180341278,
+        0.8048740330614371,
+        0.7950637767632841,
+        0.738633776823432
+      ],
+      "delta_vs_champion": -0.0457920926626896,
+      "se_delta": 0.017397751356216073,
+      "guardrail_threshold": 0.017397751356216073,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.029171283013647464,
+        -0.07021719386251402,
+        -0.0600948917385169,
+        0.013902311882607377,
+        -0.08337940658137699
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0458 < 1.0*SE (0.0174, SE=0.0174)",
+      "champion_at_step": "T01",
+      "champion_mean_auroc": 0.8186272470097089,
+      "time_sec": 1.184788465499878
+    },
+    {
+      "trial": "T03",
+      "stage": "Exploration",
+      "tier": "Early",
+      "hypothesis": "Train-set PCA (256-d, 95% variance) + L2 LogReg + Metadata",
+      "family": "early",
+      "params": {
+        "c": 1.0,
+        "l2_norm": false,
+        "pca_dim": 256,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8158116924949914,
+      "fold_cv_aurocs": [
+        0.7931049218980253,
+        0.813197339059408,
+        0.8532516894268046,
+        0.8063957858415985,
+        0.8131087262491203
+      ],
+      "delta_vs_champion": -0.0028155545147175998,
+      "se_delta": 0.00876546148550358,
+      "guardrail_threshold": 0.00876546148550358,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.02590242816843802,
+        0.007212027162766255,
+        -0.011717235373149393,
+        0.02523432096092182,
+        -0.008904457155688661
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0028 < 1.0*SE (0.0088, SE=0.0088)",
+      "champion_at_step": "T01",
+      "champion_mean_auroc": 0.8186272470097089,
+      "time_sec": 1.4381606578826904
+    },
+    {
+      "trial": "T04",
+      "stage": "Exploration",
+      "tier": "Early",
+      "hypothesis": "Ablation: Top Early configuration without metadata",
+      "family": "early",
+      "params": {
+        "c": 1.0,
+        "l2_norm": true,
+        "pca_dim": 256,
+        "use_metadata": false,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8247159309949446,
+      "fold_cv_aurocs": [
+        0.8000796357446605,
+        0.8105165496791112,
+        0.8633002231312522,
+        0.7987626536025549,
+        0.8509205928171445
+      ],
+      "delta_vs_champion": 0.006088683985235699,
+      "se_delta": 0.008190405516649998,
+      "guardrail_threshold": 0.008190405516649998,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.018927714321802847,
+        0.004531237782469444,
+        -0.0016687016687018108,
+        0.017601188721878214,
+        0.028907409412335494
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=+0.0061 < 1.0*SE (0.0082, SE=0.0082)",
+      "champion_at_step": "T01",
+      "champion_mean_auroc": 0.8186272470097089,
+      "time_sec": 1.3649981021881104
+    },
+    {
+      "trial": "T05",
+      "stage": "Exploration",
+      "tier": "Late",
+      "hypothesis": "Uniform Softmax Probability Averaging (1/3 weight each) + Metadata head",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8255509932554002,
+      "fold_cv_aurocs": [
+        0.8369317081386046,
+        0.8031285900744028,
+        0.8741766056666211,
+        0.7842602917972376,
+        0.8292577706001351
+      ],
+      "delta_vs_champion": 0.006923746245691276,
+      "se_delta": 0.0034396244004705353,
+      "guardrail_threshold": 0.0034396244004705353,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        0.017924358072141322,
+        -0.00285672182223895,
+        0.009207680866667123,
+        0.003098826916560826,
+        0.007244587195326058
+      ],
+      "decision": "ADOPTED",
+      "reason": "Exceeded champion by delta=+0.0069 >= 1.0*SE (0.0034, SE=0.0034)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 3.7858214378356934
+    },
+    {
+      "trial": "T06",
+      "stage": "Exploration",
+      "tier": "Late",
+      "hypothesis": "Temperature-scaled soft voting (tau=1.5) + Metadata head",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.5,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8257610991365162,
+      "fold_cv_aurocs": [
+        0.8228787960807666,
+        0.8157103159566214,
+        0.8792648297256592,
+        0.7853446070441145,
+        0.8256069468754198
+      ],
+      "delta_vs_champion": 0.00021010588111605166,
+      "se_delta": 0.004449481534812483,
+      "guardrail_threshold": 0.004449481534812483,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.014052912057837985,
+        0.012581725882218509,
+        0.005088224059038082,
+        0.0010843152468769102,
+        -0.0036508237247152575
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=+0.0002 < 1.0*SE (0.0044, SE=0.0044)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 3.7871413230895996
+    },
+    {
+      "trial": "T07",
+      "stage": "Exploration",
+      "tier": "Late",
+      "hypothesis": "Validation-optimized simplex weights (w1, w2, w3 >= 0, sum=1)",
+      "family": "late",
+      "params": {
+        "strategy": "simplex",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8208433518728822,
+      "fold_cv_aurocs": [
+        0.8280689835615945,
+        0.8122178314296541,
+        0.856469180816339,
+        0.7671699537463085,
+        0.8402908098105142
+      ],
+      "delta_vs_champion": -0.00470764138251818,
+      "se_delta": 0.0062358370013621475,
+      "guardrail_threshold": 0.0062358370013621475,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.008862724577010095,
+        0.009089241355251243,
+        -0.017707424850282094,
+        -0.017090338050929077,
+        0.011033039210379125
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0047 < 1.0*SE (0.0062, SE=0.0062)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 3.307513475418091
+    },
+    {
+      "trial": "T08",
+      "stage": "Exploration",
+      "tier": "Late",
+      "hypothesis": "Meta-Stacking classifier (Logistic Regression on OOF probability vectors)",
+      "family": "late",
+      "params": {
+        "strategy": "stacking",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8155736258325114,
+      "fold_cv_aurocs": [
+        0.8256782872300114,
+        0.7657106166958384,
+        0.8698334549333013,
+        0.8247703104230198,
+        0.7918754598803861
+      ],
+      "delta_vs_champion": -0.00997736742288884,
+      "se_delta": 0.014293996349079088,
+      "guardrail_threshold": 0.014293996349079088,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.01125342090859327,
+        -0.03741797337856445,
+        -0.004343150733319812,
+        0.040510018625782296,
+        -0.03738231071974896
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0100 < 1.0*SE (0.0143, SE=0.0143)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 9.527145862579346
+    },
+    {
+      "trial": "T09",
+      "stage": "Exploration",
+      "tier": "Intermediate",
+      "hypothesis": "Stream-level Gated Fusion (learnable alpha_m(x)) + Metadata",
+      "family": "intermediate",
+      "params": {
+        "arch": "gated",
+        "dropout": 0.2,
+        "epochs": 40,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8324010259907023,
+      "fold_cv_aurocs": [
+        0.8261835591884853,
+        0.8398181730694044,
+        0.8717477322700057,
+        0.7943980854941446,
+        0.8298575799314715
+      ],
+      "delta_vs_champion": 0.006850032735302047,
+      "se_delta": 0.008173333230938603,
+      "guardrail_threshold": 0.008173333230938603,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.01074814895011933,
+        0.03668958299500158,
+        -0.0024288733966154608,
+        0.010137793696907038,
+        0.0005998093313364095
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=+0.0069 < 1.0*SE (0.0082, SE=0.0082)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 3.032841205596924
+    },
+    {
+      "trial": "T10",
+      "stage": "Exploration",
+      "tier": "Intermediate",
+      "hypothesis": "Stream-ABMIL (multi-stream attention pooling across backbones)",
+      "family": "intermediate",
+      "params": {
+        "arch": "abmil",
+        "epochs": 40,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.7966943375203346,
+      "fold_cv_aurocs": [
+        0.7982095490716181,
+        0.7670561239526756,
+        0.8145506396658471,
+        0.8078591377606156,
+        0.795796237150917
+      ],
+      "delta_vs_champion": -0.028856655735065573,
+      "se_delta": 0.01390850654627151,
+      "guardrail_threshold": 0.01390850654627151,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.038722159066986506,
+        -0.03607246612172721,
+        -0.05962596600077408,
+        0.023598845963378023,
+        -0.033461533449218095
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0289 < 1.0*SE (0.0139, SE=0.0139)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 1.7806947231292725
+    },
+    {
+      "trial": "T11",
+      "stage": "Exploration",
+      "tier": "Intermediate",
+      "hypothesis": "Train-set PCA (128-d per stream) -> Gated Fusion",
+      "family": "intermediate",
+      "params": {
+        "arch": "pca_gated",
+        "pca_per_stream": 128,
+        "epochs": 40,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.7204105370139589,
+      "fold_cv_aurocs": [
+        0.7383634974767979,
+        0.6596759835676093,
+        0.8025183697226709,
+        0.67638607697721,
+        0.7251087573255062
+      ],
+      "delta_vs_champion": -0.10514045624144142,
+      "se_delta": 0.011490280112090644,
+      "guardrail_threshold": 0.011490280112090644,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.09856821066180677,
+        -0.1434526065067936,
+        -0.07165823594395027,
+        -0.10787421482002757,
+        -0.10414901327462889
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.1051 < 1.0*SE (0.0115, SE=0.0115)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 1.825791597366333
+    },
+    {
+      "trial": "T12",
+      "stage": "Exploration",
+      "tier": "Intermediate",
+      "hypothesis": "Ablation: Top Intermediate configuration without metadata",
+      "family": "intermediate",
+      "params": {
+        "arch": "gated",
+        "epochs": 40,
+        "use_metadata": false,
+        "class_weight": null
+      },
+      "mean_cv_auroc": 0.8238419183600602,
+      "fold_cv_aurocs": [
+        0.8203892166946354,
+        0.8157749748882753,
+        0.8658697023520372,
+        0.7922021228178864,
+        0.8249735750474665
+      ],
+      "delta_vs_champion": -0.0017090748953400904,
+      "se_delta": 0.005335785046348954,
+      "guardrail_threshold": 0.005335785046348954,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.016542491443969243,
+        0.01264638481387248,
+        -0.008306903314583947,
+        0.007941831020648826,
+        -0.004284195552668568
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0017 < 1.0*SE (0.0053, SE=0.0053)",
+      "champion_at_step": "T05",
+      "champion_mean_auroc": 0.8255509932554002,
+      "time_sec": 1.9987823963165283
+    },
+    {
+      "trial": "T13",
+      "stage": "Exploitation",
+      "tier": "Exploitation (Pooling)",
+      "hypothesis": "Concatenated [mean; max] slide pooling representation",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8409195272194105,
+      "fold_cv_aurocs": [
+        0.8499858953307229,
+        0.8298757345555375,
+        0.8762229862076252,
+        0.8107598727672619,
+        0.8377531472359058
+      ],
+      "delta_vs_champion": 0.015368533964010412,
+      "se_delta": 0.004916549853382586,
+      "guardrail_threshold": 0.004916549853382586,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        0.01305418719211826,
+        0.026747144481134688,
+        0.0020463805410040337,
+        0.02649958097002436,
+        0.008495376635770713
+      ],
+      "decision": "ADOPTED",
+      "reason": "Exceeded champion by delta=+0.0154 >= 1.0*SE (0.0049, SE=0.0049)",
+      "champion_at_step": "T13",
+      "champion_mean_auroc": 0.8409195272194105,
+      "consecutive_failures": 0,
+      "time_sec": 10.08098816871643
+    },
+    {
+      "trial": "T14",
+      "stage": "Exploitation",
+      "tier": "Exploitation (Pooling)",
+      "hypothesis": "Slide max pooling representation",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null
+      },
+      "pooling": "max",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8449872034493042,
+      "fold_cv_aurocs": [
+        0.8382318338475975,
+        0.8115396644953294,
+        0.8904810669787627,
+        0.8281039043970079,
+        0.8565795475278234
+      ],
+      "delta_vs_champion": 0.0040676762298935245,
+      "se_delta": 0.007906266898629133,
+      "guardrail_threshold": 0.007906266898629133,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.011754061483125411,
+        -0.0183360700602081,
+        0.014258080771137549,
+        0.01734403162974596,
+        0.018826400291917622
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=+0.0041 < 1.0*SE (0.0079, SE=0.0079)",
+      "champion_at_step": "T13",
+      "champion_mean_auroc": 0.8409195272194105,
+      "consecutive_failures": 1,
+      "time_sec": 5.962055683135986
+    },
+    {
+      "trial": "T15",
+      "stage": "Exploitation",
+      "tier": "Exploitation (Strategy)",
+      "hypothesis": "Temperature-scaled soft voting (tau=1.5)",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null,
+        "tau": 1.5
+      },
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8391278428182926,
+      "fold_cv_aurocs": [
+        0.8416734332990491,
+        0.8283058758428217,
+        0.8721173774169166,
+        0.8133614123515601,
+        0.8401811151811154
+      ],
+      "delta_vs_champion": -0.0017916844011180767,
+      "se_delta": 0.002061915087168216,
+      "guardrail_threshold": 0.002061915087168216,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.008312462031673795,
+        -0.0015698587127158659,
+        -0.004105608790708537,
+        0.002601539584298207,
+        0.002427967945209608
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0018 < 1.0*SE (0.0021, SE=0.0021)",
+      "champion_at_step": "T13",
+      "champion_mean_auroc": 0.8409195272194105,
+      "consecutive_failures": 2,
+      "time_sec": 8.639584302902222
+    },
+    {
+      "trial": "T16",
+      "stage": "Exploitation",
+      "tier": "Exploitation (Strategy)",
+      "hypothesis": "Calibrated temperature soft voting (tau=1.2)",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "use_metadata": true,
+        "class_weight": null,
+        "tau": 1.2
+      },
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8410764225347626,
+      "fold_cv_aurocs": [
+        0.8416908761736348,
+        0.8295374029364178,
+        0.8779110688480889,
+        0.8168349503078566,
+        0.8394078144078145
+      ],
+      "delta_vs_champion": 0.0001568953153518571,
+      "se_delta": 0.002358949384536714,
+      "guardrail_threshold": 0.002358949384536714,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.00829501915708808,
+        -0.0003383316191197805,
+        0.0016880826404637173,
+        0.006075077540594664,
+        0.0016546671719087636
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=+0.0002 < 1.0*SE (0.0024, SE=0.0024)",
+      "champion_at_step": "T13",
+      "champion_mean_auroc": 0.8409195272194105,
+      "consecutive_failures": 3,
+      "time_sec": 9.105597734451294
+    },
+    {
+      "trial": "T17",
+      "stage": "Exploitation",
+      "tier": "Exploitation (Regularization)",
+      "hypothesis": "Regularization shrinkage C=0.5",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 0.5,
+        "use_metadata": true,
+        "class_weight": null,
+        "weight_decay": 0.002
+      },
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8408095144747509,
+      "fold_cv_aurocs": [
+        0.8534813872498602,
+        0.8279326584745305,
+        0.876361560155723,
+        0.8095770203159366,
+        0.8366949461777048
+      ],
+      "delta_vs_champion": -0.00011001274465964883,
+      "se_delta": 0.0009610313869399356,
+      "guardrail_threshold": 0.0009610313869399356,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        0.003495491919137339,
+        -0.001943076081007078,
+        0.00013857394809779766,
+        -0.0011828524513253225,
+        -0.0010582010582009804
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=-0.0001 < 1.0*SE (0.0010, SE=0.0010)",
+      "champion_at_step": "T13",
+      "champion_mean_auroc": 0.8409195272194105,
+      "consecutive_failures": 4,
+      "time_sec": 7.102043390274048
+    },
+    {
+      "trial": "T18",
+      "stage": "Exploitation",
+      "tier": "Exploitation (Regularization)",
+      "hypothesis": "Regularization C=2.0",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 2.0,
+        "use_metadata": true,
+        "class_weight": null,
+        "weight_decay": 0.0005
+      },
+      "pooling": "concat",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8413381523074038,
+      "fold_cv_aurocs": [
+        0.8460949614151584,
+        0.8305821709762596,
+        0.8814119913198254,
+        0.8105500570402048,
+        0.838051580785571
+      ],
+      "delta_vs_champion": 0.0004186250879931741,
+      "se_delta": 0.00144604708788567,
+      "guardrail_threshold": 0.00144604708788567,
+      "k_se": 1.0,
+      "paired_fold_deltas": [
+        -0.0038909339155644984,
+        0.0007064364207221008,
+        0.005189005112200218,
+        -0.0002098157270571388,
+        0.0002984335496651891
+      ],
+      "decision": "REJECTED",
+      "reason": "Failed guardrail: delta=+0.0004 < 1.0*SE (0.0014, SE=0.0014)",
+      "champion_at_step": "T13",
+      "champion_mean_auroc": 0.8409195272194105,
+      "consecutive_failures": 5,
+      "time_sec": 5.6163599491119385
+    }
+  ]
+}

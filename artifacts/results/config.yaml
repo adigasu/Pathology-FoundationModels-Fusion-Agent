@@ -1,0 +1,13 @@
+agent_version: v4
+all_seeds: true
+experiment_name: results
+git_commit: 5d13570
+k_se: 1.0
+n_bootstrap: 1000
+output_dir: artifacts/results
+patience: 5
+seeds:
+- 42
+- 1337
+- 2026
+timestamp: '2026-09-21 12:33:00'

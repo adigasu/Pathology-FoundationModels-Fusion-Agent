@@ -1,0 +1,382 @@
+{
+  "seed": 1337,
+  "agent_version": "v5",
+  "winning_pooling": "mean_max_std",
+  "total_trials_run": 13,
+  "champion": {
+    "trial": "T12",
+    "stage": "Final Champion (Stage 3)",
+    "config": {
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      }
+    },
+    "mean_auroc": 0.832670024892512,
+    "stability_utility": 0.8225955076026825,
+    "grand_se": 0.010074517289829416,
+    "pooling": "mean_max_std",
+    "gamma_meta": 1.0
+  },
+  "trials": [
+    {
+      "trial": "T01",
+      "stage": "Stage 1 (Pooling Screen)",
+      "hypothesis": "Spatial mean pooling across all tiles",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "mean",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8098090562732227,
+      "fold_cv_aurocs": [
+        0.8577428967714471,
+        0.8703747812122196,
+        0.7341901727780218,
+        0.8036513149321032,
+        0.7830861156723224
+      ],
+      "fold_std": 0.055758651741544984,
+      "decision": "EVALUATED",
+      "time_sec": 2.743285894393921
+    },
+    {
+      "trial": "T02",
+      "stage": "Stage 1 (Pooling Screen)",
+      "hypothesis": "Element-wise max pooling across all tiles",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "max",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8227462129225463,
+      "fold_cv_aurocs": [
+        0.8506442672648511,
+        0.8537469767354826,
+        0.795481426680113,
+        0.8132852451325359,
+        0.8005731487997497
+      ],
+      "fold_std": 0.027676127104575596,
+      "decision": "EVALUATED",
+      "time_sec": 3.68037486076355
+    },
+    {
+      "trial": "T03",
+      "stage": "Stage 1 (Pooling Screen)",
+      "hypothesis": "Concatenated [mean; max] multi-resolution pooling",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "concat_mean_max",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8234335702317587,
+      "fold_cv_aurocs": [
+        0.8482644933720203,
+        0.8713470042698285,
+        0.7811930725723829,
+        0.8109076810800949,
+        0.8054555998644669
+      ],
+      "fold_std": 0.03597442447557973,
+      "decision": "EVALUATED",
+      "time_sec": 5.717413902282715
+    },
+    {
+      "trial": "T04",
+      "stage": "Stage 1 (Pooling Screen)",
+      "hypothesis": "Top-20% norm tile mean pooling",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "top20",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.7837409394226492,
+      "fold_cv_aurocs": [
+        0.8093903825279958,
+        0.8361516941976712,
+        0.7459238474837818,
+        0.7474758907394377,
+        0.7797628821643601
+      ],
+      "fold_std": 0.03926159792329071,
+      "decision": "EVALUATED",
+      "time_sec": 2.7680275440216064
+    },
+    {
+      "trial": "T05",
+      "stage": "Stage 1 (Pooling Screen)",
+      "hypothesis": "Tri-statistic [mean; max; std] (location + extrema + dispersion)",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8275578935819944,
+      "fold_cv_aurocs": [
+        0.8580945878948952,
+        0.8707801108457922,
+        0.7739272799207118,
+        0.8074005004300572,
+        0.8275869888185159
+      ],
+      "fold_std": 0.03899748014826984,
+      "decision": "STAGE1_WINNER",
+      "time_sec": 8.942713975906372
+    },
+    {
+      "trial": "T06",
+      "stage": "Stage 2 (Reasoner)",
+      "hypothesis": "Initial Baseline on R*=`mean_max_std`: Uniform Late Voting + Metadata",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8275578935819944,
+      "fold_cv_aurocs": [
+        0.8580945878948952,
+        0.8707801108457922,
+        0.7739272799207118,
+        0.8074005004300572,
+        0.8275869888185159
+      ],
+      "delta_vs_champion": 0.0,
+      "se_delta": 0.0,
+      "guardrail_threshold": 0.0,
+      "decision": "INITIAL_CHAMPION",
+      "reason": "Baseline configuration established on frozen representation R*",
+      "time_sec": 8.255722999572754
+    },
+    {
+      "trial": "T07",
+      "stage": "Stage 2 (Reasoner)",
+      "hypothesis": "Late Fusion with Calibrated Temperature Scaling (tau=1.5) on optimal representation R*",
+      "reasoning": "Calibrated temperature scaling dampens overconfident posteriors on ambiguous transitional subtypes.",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.5,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8226317890342203,
+      "fold_cv_aurocs": [
+        0.8328409284860898,
+        0.883952388303784,
+        0.7725155097897298,
+        0.8118697057367008,
+        0.811980412854797
+      ],
+      "delta_vs_champion": -0.004926104547774157,
+      "se_delta": 0.006911786242264907,
+      "guardrail_threshold": 0.006911786242264907,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0049 (SE: 0.0069).",
+      "time_sec": 8.107969522476196
+    },
+    {
+      "trial": "T08",
+      "stage": "Stage 2 (Reasoner)",
+      "hypothesis": "Late Fusion with Moderate Temperature Scaling (tau=1.2) on R*",
+      "reasoning": "Slightly sharper temperature preserves high-confidence predictions on distinct solid sheets.",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.2,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8208114318219991,
+      "fold_cv_aurocs": [
+        0.8295541657523225,
+        0.876154454315374,
+        0.7746288710984934,
+        0.8152558188026168,
+        0.8084638491411891
+      ],
+      "delta_vs_champion": -0.006746461759995293,
+      "se_delta": 0.007224120224786753,
+      "guardrail_threshold": 0.007224120224786753,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0067 (SE: 0.0072).",
+      "time_sec": 8.254791259765625
+    },
+    {
+      "trial": "T09",
+      "stage": "Stage 2 (Reasoner)",
+      "hypothesis": "Upweight clinical metadata prior (gamma_meta=1.5) on Calibrated Late Fusion",
+      "reasoning": "Clinical staging and age offer diagnostic priors for In situ vs Invasive adenocarcinoma.",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.5,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.5,
+      "mean_cv_auroc": 0.8210746667459153,
+      "fold_cv_aurocs": [
+        0.8217826461528458,
+        0.8711115254629211,
+        0.78319442523055,
+        0.8176481742122136,
+        0.8116365626710454
+      ],
+      "delta_vs_champion": -0.006483226836079247,
+      "se_delta": 0.008814240444051916,
+      "guardrail_threshold": 0.008814240444051916,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0065 (SE: 0.0088).",
+      "time_sec": 7.840119123458862
+    },
+    {
+      "trial": "T10",
+      "stage": "Stage 2 (Reasoner)",
+      "hypothesis": "Strong clinical metadata scaling (gamma_meta=2.0) with tau=1.5",
+      "reasoning": "Test if stronger epidemiological weighting compensates for small cohort minority subtypes.",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.5,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 2.0,
+      "mean_cv_auroc": 0.8201691503198735,
+      "fold_cv_aurocs": [
+        0.8164198343614627,
+        0.8652352148247057,
+        0.7856826746810326,
+        0.8170737222091903,
+        0.8164343055229756
+      ],
+      "delta_vs_champion": -0.007388743262121089,
+      "se_delta": 0.009619527507209506,
+      "guardrail_threshold": 0.009619527507209506,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0074 (SE: 0.0096).",
+      "time_sec": 8.412769317626953
+    },
+    {
+      "trial": "T11",
+      "stage": "Stage 2 (Reasoner)",
+      "hypothesis": "Early Concatenation of foundation representations with L2 regularization C=1.0",
+      "reasoning": "Direct joint feature interaction in early linear classifier to compare with late decision voting.",
+      "family": "early",
+      "params": {
+        "c": 1.0,
+        "l2_norm": false,
+        "pca_dim": null,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.0,
+      "mean_cv_auroc": 0.8085435668938767,
+      "fold_cv_aurocs": [
+        0.8017230309088988,
+        0.8795332594183171,
+        0.7544348675711564,
+        0.8077427216097168,
+        0.7992839549612949
+      ],
+      "delta_vs_champion": -0.019014326688117644,
+      "se_delta": 0.011462503936770797,
+      "guardrail_threshold": 0.011462503936770797,
+      "decision": "REJECT",
+      "reason": "Underperformed champion by -0.0190 (SE: 0.0115).",
+      "time_sec": 6.731701135635376
+    },
+    {
+      "trial": "T12",
+      "stage": "Stage 3 (Stability Gate)",
+      "finalist_index": 1,
+      "hypothesis": "15-Fold Stability: Initial Baseline on R*=`mean_max_std`: Uniform Late Voting + Metadata",
+      "family": "late",
+      "params": {
+        "strategy": "uniform",
+        "c": 1.0,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.0,
+      "seed_means": [
+        0.8278535065319588,
+        0.8275578935819944,
+        0.8425986745635827
+      ],
+      "grand_mean_auroc": 0.832670024892512,
+      "grand_std": 0.03901843768458801,
+      "grand_se": 0.010074517289829416,
+      "stability_utility": 0.8225955076026825,
+      "mean_cv_auroc": 0.832670024892512,
+      "fold_cv_aurocs": [
+        0.904848482300678,
+        0.8659173581997884,
+        0.7897625363142604,
+        0.7735478405921755,
+        0.8051913152528918
+      ],
+      "time_sec": 20.70563578605652
+    },
+    {
+      "trial": "T13",
+      "stage": "Stage 3 (Stability Gate)",
+      "finalist_index": 2,
+      "hypothesis": "15-Fold Stability: Late Fusion with Calibrated Temperature Scaling (tau=1.5) on optimal representation R*",
+      "family": "late",
+      "params": {
+        "strategy": "temperature",
+        "c": 1.0,
+        "tau": 1.5,
+        "use_metadata": true
+      },
+      "pooling": "mean_max_std",
+      "gamma_meta": 1.0,
+      "seed_means": [
+        0.8277165810767168,
+        0.8226317890342203,
+        0.8431740203225981
+      ],
+      "grand_mean_auroc": 0.8311741301445118,
+      "grand_std": 0.03791934631546823,
+      "grand_se": 0.009790733118592,
+      "stability_utility": 0.8213833970259198,
+      "mean_cv_auroc": 0.8311741301445118,
+      "fold_cv_aurocs": [
+        0.902526562225434,
+        0.8582328028961854,
+        0.7893159385770224,
+        0.783980373758699,
+        0.8045272279262426
+      ],
+      "time_sec": 19.895326614379883
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "experiment_name": "results",
+  "output_dir": "artifacts/results",
+  "timestamp": "2026-09-21 12:33:00",
+  "git_commit": "5d13570",
+  "agent_version": "v4",
+  "k_se": 1.0,
+  "patience": 5,
+  "n_bootstrap": 1000,
+  "all_seeds": true,
+  "seeds": [
+    42,
+    1337,
+    2026
+  ]
+}
