@@ -62,13 +62,15 @@ def train_and_eval_baseline(
     clf.fit(x_tv, y_tv)
     pred_proba = clf.predict_proba(x_te)
     
-    return compute_patient_bootstrap_ci(
+    res = compute_patient_bootstrap_ci(
         y_true=y_te,
         y_pred_proba=pred_proba,
         n_bootstrap=n_bootstrap,
         seed=seed,
         class_names=CLASS_NAMES
     )
+    res["y_pred_proba"] = pred_proba
+    return res
 
 
 def evaluate_champion_on_test(
@@ -136,24 +138,28 @@ def evaluate_champion_on_test(
     model.fit(tv_feats, tv_meta, y_tv)
     pred_proba = model.predict_proba(te_feats, te_meta)
     
-    return compute_patient_bootstrap_ci(
+    res = compute_patient_bootstrap_ci(
         y_true=y_te,
         y_pred_proba=pred_proba,
         n_bootstrap=n_bootstrap,
         seed=seed,
         class_names=CLASS_NAMES
     )
+    res["y_pred_proba"] = pred_proba
+    return res
 
 
-def run_pipeline_for_seed(seed: int, k_se: float = 1.0, patience: int = 5, n_bootstrap: int = 1000, agent_version: str = "v3", output_dir: str = "artifacts") -> Dict[str, Any]:
+def run_pipeline_for_seed(seed: int, k_se: float = 1.0, patience: int = 5, n_bootstrap: int = 1000, agent_version: str = "v4", modality: str = "both", output_dir: str = "artifacts/results") -> Dict[str, Any]:
     print("\n" + "#" * 80, flush=True)
     print(f"### EXECUTING PHASE 2 PIPELINE FOR SEED {seed} (Agent: {agent_version.upper()})", flush=True)
     print("#" * 80 + "\n", flush=True)
     
     # 1. Run Autonomous Search Agent
     agent_cls = get_agent_cls(agent_version)
-    if agent_version == "v3":
+    if agent_version in ("v3", "v5"):
         agent = agent_cls(seed=seed, k_se=k_se)
+    elif agent_version in ("v4", "llm"):
+        agent = agent_cls(seed=seed, k_se=k_se, max_consecutive_failures=patience, max_trials=25)
     else:
         agent = agent_cls(seed=seed, k_se=k_se, max_consecutive_failures=patience)
     champion = agent.run_search()
@@ -245,6 +251,58 @@ def run_pipeline_for_seed(seed: int, k_se: float = 1.0, patience: int = 5, n_boo
         champion=champion, dataset=champ_ds, use_metadata_override=True, seed=seed, n_bootstrap=n_bootstrap
     )
     
+
+    # Optional Multimodal Quad-Model (+ Prism2 VLM) Evaluation
+    if modality in ("quad", "both"):
+        print("Evaluating: Prism2 VLM alone (no metadata)...", flush=True)
+        p2_ds = load_multimodal_dataset(seed=seed, models=["prism2_diag"])
+        results["Prism2 VLM alone (no metadata)"] = train_and_eval_baseline(
+            feat_name="prism2_diag", use_metadata=False, dataset=p2_ds, seed=seed, n_bootstrap=n_bootstrap
+        )
+        print("Evaluating: Prism2 VLM alone + Metadata...", flush=True)
+        results["Prism2 VLM alone + Metadata"] = train_and_eval_baseline(
+            feat_name="prism2_diag", use_metadata=True, dataset=p2_ds, seed=seed, n_bootstrap=n_bootstrap
+        )
+
+        tv_mask = p2_ds["splits_mask"]["train_val"]
+        te_mask = p2_ds["splits_mask"]["test"]
+        y_tv = p2_ds["y"][tv_mask]
+        y_te = p2_ds["y"][te_mask]
+
+        # Quad-Model Late Fusion (+ Prism2 VLM) (no metadata)
+        p_tri_nometa = results["Fused (Agent-Selected) (no metadata)"]["y_pred_proba"]
+        clf_p2_raw = LogisticRegression(C=1.0, max_iter=200, tol=1e-3, random_state=seed)
+        clf_p2_raw.fit(p2_ds["features"]["prism2_diag"][tv_mask], y_tv)
+        logits_p2_raw = clf_p2_raw.decision_function(p2_ds["features"]["prism2_diag"][te_mask]) / 1.5
+        exp_p2_raw = np.exp(logits_p2_raw - np.max(logits_p2_raw, axis=-1, keepdims=True))
+        p_p2_nometa = exp_p2_raw / np.sum(exp_p2_raw, axis=-1, keepdims=True)
+        p_quad_nometa = 0.75 * p_tri_nometa + 0.25 * p_p2_nometa
+
+        print("Evaluating: Quad Multimodal Late Fusion (+ Prism2 VLM) (no metadata)...", flush=True)
+        res_q_nometa = compute_patient_bootstrap_ci(
+            y_true=y_te, y_pred_proba=p_quad_nometa, n_bootstrap=n_bootstrap, seed=seed, class_names=CLASS_NAMES
+        )
+        res_q_nometa["y_pred_proba"] = p_quad_nometa
+        results["Quad Multimodal Late Fusion (+ Prism2 VLM) (no metadata)"] = res_q_nometa
+
+        # Quad-Model Late Fusion (+ Prism2 VLM) + Metadata (Champion)
+        p_tri_meta = results["Fused (Agent-Selected) + Metadata"]["y_pred_proba"]
+        p2_train_meta = np.concatenate([p2_ds["features"]["prism2_diag"][tv_mask], champ_ds["metadata"][tv_mask]], axis=1)
+        p2_test_meta = np.concatenate([p2_ds["features"]["prism2_diag"][te_mask], champ_ds["metadata"][te_mask]], axis=1)
+        clf_p2_meta = LogisticRegression(C=1.0, max_iter=200, tol=1e-3, random_state=seed)
+        clf_p2_meta.fit(p2_train_meta, y_tv)
+        logits_p2_meta = clf_p2_meta.decision_function(p2_test_meta) / 1.5
+        exp_p2_meta = np.exp(logits_p2_meta - np.max(logits_p2_meta, axis=-1, keepdims=True))
+        p_p2_meta = exp_p2_meta / np.sum(exp_p2_meta, axis=-1, keepdims=True)
+        p_quad_meta = 0.75 * p_tri_meta + 0.25 * p_p2_meta
+
+        print("Evaluating: Quad Multimodal Late Fusion (+ Prism2 VLM) + Metadata (Champion)...", flush=True)
+        res_q_meta = compute_patient_bootstrap_ci(
+            y_true=y_te, y_pred_proba=p_quad_meta, n_bootstrap=n_bootstrap, seed=seed, class_names=CLASS_NAMES
+        )
+        res_q_meta["y_pred_proba"] = p_quad_meta
+        results["Quad Multimodal Late Fusion (+ Prism2 VLM) + Metadata (Champion)"] = res_q_meta
+
     # Format Comparison Table
     table_rows = [
         "| Configuration | Macro AUROC | 95% Bootstrap CI | Balanced Acc. | 95% Bootstrap CI |",
@@ -255,7 +313,7 @@ def run_pipeline_for_seed(seed: int, k_se: float = 1.0, patience: int = 5, n_boo
         auroc_ci = res["macro_auroc"]["ci_str"]
         bal_val = res["balanced_acc"]["value"]
         bal_ci = res["balanced_acc"]["ci_str"]
-        is_champion = (name == "Fused (Agent-Selected) + Metadata")
+        is_champion = name in ("Fused (Agent-Selected) + Metadata", "Quad Multimodal Late Fusion (+ Prism2 VLM) + Metadata (Champion)")
         fmt = "**" if is_champion else ""
         table_rows.append(f"| {fmt}{name}{fmt} | {fmt}{auroc_val:.4f}{fmt} | {fmt}{auroc_ci}{fmt} | {fmt}{bal_val:.4f}{fmt} | {fmt}{bal_ci}{fmt} |")
         
@@ -266,13 +324,18 @@ def run_pipeline_for_seed(seed: int, k_se: float = 1.0, patience: int = 5, n_boo
     print(table_md, flush=True)
     print("=" * 75 + "\n", flush=True)
     
-    # Save seed artifacts
+    # Save seed artifacts/results
+    # Strip numpy arrays for clean JSON serialization
+    clean_results = {}
+    for k, v in results.items():
+        clean_results[k] = {kk: vv for kk, vv in v.items() if kk != "y_pred_proba"}
+
     seed_summary = {
         "seed": seed,
         "champion_trial": champion["trial"],
         "champion_cv_auroc": champion["mean_auroc"],
         "champion_config": champion["config"],
-        "results": results
+        "results": clean_results
     }
     os.makedirs(output_dir, exist_ok=True)
     with open(os.path.join(output_dir, f"phase2_results_seed_{seed}.json"), "w") as f:
@@ -283,7 +346,7 @@ def run_pipeline_for_seed(seed: int, k_se: float = 1.0, patience: int = 5, n_boo
     return seed_summary
 
 
-def aggregate_multi_seed_results(seed_results: List[Dict[str, Any]], output_dir: str = "artifacts"):
+def aggregate_multi_seed_results(seed_results: List[Dict[str, Any]], output_dir: str = "artifacts/results"):
     print("\n" + "=" * 80, flush=True)
     print("AGGREGATING MULTI-SEED EVALUATION ACROSS SEEDS (42, 1337, 2026)", flush=True)
     print("=" * 80 + "\n", flush=True)
@@ -303,7 +366,7 @@ def aggregate_multi_seed_results(seed_results: List[Dict[str, Any]], output_dir:
         mean_auc, std_auc = float(np.mean(aurocs)), float(np.std(aurocs, ddof=1))
         mean_bal, std_bal = float(np.mean(bal_accs)), float(np.std(bal_accs, ddof=1))
         
-        is_champion = (cfg == "Fused (Agent-Selected) + Metadata")
+        is_champion = cfg in ("Fused (Agent-Selected) + Metadata", "Quad Multimodal Late Fusion (+ Prism2 VLM) + Metadata (Champion)")
         fmt = "**" if is_champion else ""
         
         multi_seed_table.append(
@@ -336,7 +399,8 @@ def main():
     parser = argparse.ArgumentParser(description="Phase 2 Autonomous Multi-Foundation-Model Fusion Agent Runner")
     parser.add_argument("--seed", type=int, default=42, help="Primary random seed (default: 42)")
     parser.add_argument("--all-seeds", action="store_true", help="Run full multi-seed evaluation across seeds 42, 1337, 2026")
-    parser.add_argument("--agent-version", type=str, default="v3", choices=["v1", "v2", "v3", "v4", "llm"], help="Agent search version: v1 (sequential), v2 (principled exploitation), v3 (3-stage hierarchical stability), v4/llm (LLM-powered autonomous fusion agent)")
+    parser.add_argument("--agent-version", type=str, default="v4", choices=["v1", "v2", "v3", "v4", "v5", "llm"], help="Agent search version: v1 (sequential), v2 (principled exploitation), v3 (3-stage hierarchical stability), v4/llm (LLM-powered autonomous fusion agent), v5 (unified production agent)")
+    parser.add_argument("--modality", type=str, default="both", choices=["tri", "quad", "both"], help="Fusion modality scope: 'tri' (UNI2+Virchow2+GigaPath), 'quad' (+ Prism2 VLM), or 'both'")
     parser.add_argument("--k-se", type=float, default=1.0, help="SE Guardrail threshold factor (default: 1.0)")
     parser.add_argument("--patience", type=int, default=5, help="Max consecutive failures before early stopping (default: 5)")
     parser.add_argument("--n-bootstrap", type=int, default=1000, help="Number of bootstrap resamples (default: 1000)")
@@ -350,7 +414,7 @@ def main():
     elif args.exp_name is not None:
         output_dir = os.path.join("artifacts", "results", args.exp_name)
     else:
-        output_dir = "artifacts"
+        output_dir = "artifacts/results"
 
     os.makedirs(output_dir, exist_ok=True)
 
@@ -388,11 +452,11 @@ def main():
         seed_list = [42, 1337, 2026]
         all_res = []
         for s in seed_list:
-            res = run_pipeline_for_seed(seed=s, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version, output_dir=output_dir)
+            res = run_pipeline_for_seed(seed=s, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version, modality=args.modality, output_dir=output_dir)
             all_res.append(res)
         aggregate_multi_seed_results(all_res, output_dir=output_dir)
     else:
-        run_pipeline_for_seed(seed=args.seed, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version, output_dir=output_dir)
+        run_pipeline_for_seed(seed=args.seed, k_se=args.k_se, patience=args.patience, n_bootstrap=args.n_bootstrap, agent_version=args.agent_version, modality=args.modality, output_dir=output_dir)
         
     print(f"\nPhase 2 execution finished in {time.time() - t_start:.2f} seconds.", flush=True)
 
