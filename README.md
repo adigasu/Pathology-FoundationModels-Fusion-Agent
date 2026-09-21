@@ -183,6 +183,16 @@ The search engine supports 5 generations of autonomous agents (`v1` to `v5`):
 - **`v4` (Autonomous Agent - Default Champion)**: Hypothesis-driven search conditioned on complete trial history, domain pathology insights, and paired 1.0-SE guardrail early stopping.
 - **`v5` (Unified Agent)**: Unified statistical pooling screen -> closed-loop autonomous reasoning -> 15-fold stability gating.
 
+### LLM API Configuration (Agent v4 / LLM)
+To enable live frontier LLM reasoning for Agent v4 hypothesis generation, export your Gemini API key:
+```bash
+export GEMINI_API_KEY="AIzaSy..."
+# Optional model override (defaults to gemini-1.5-flash or gemini-2.0-flash):
+export GEMINI_MODEL="gemini-2.0-flash"
+```
+> [!NOTE]
+> **Zero-Dependency Fallback**: If no API key is exported, Agent v4 automatically routes to its deterministic offline heuristic reasoning engine (`provider = "fallback_heuristic"`), executing complete hypothesis generation and 1.0-SE guardrail pruning locally with zero external API calls or internet dependencies.
+
 ### Step 4.1: Running Agent Search for Tri-Model and Quad-Model Fusion
 
 The following commands run the autonomous search for any agent type (`v1` to `v5`, e.g., champion `v4`) for either **Tri-Model Vision Fusion** (`UNI2` + `Virchow2` + `Prov-GigaPath`), **Multimodal Quad-Model Fusion** (+ `Prism2 VLM`), or **Both**:
