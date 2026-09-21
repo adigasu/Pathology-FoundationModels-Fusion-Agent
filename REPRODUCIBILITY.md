@@ -1,6 +1,6 @@
-# Reproducibility Guide: Pathology Foundation Models Fusion Agent
+# Pathology Foundation Models Fusion Agent
 
-This guide provides end-to-end instructions for reproducing the entire data curation, tiling, feature extraction, autonomous agent fusion search, and evaluation benchmark across all experimental seeds (`42`, `1337`, `2026`).
+This is a guide for reproducing the entire data curation, tiling, feature extraction, autonomous agent fusion search, and evaluation benchmark across all experimental seeds (`42`, `1337`, `2026`).
 
 ---
 
@@ -10,12 +10,14 @@ This guide provides end-to-end instructions for reproducing the entire data cura
 > export OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2
 > ```
 
+---
+
 ## 1. Environment Setup
 
 ### 1.1 Hardware Requirements
 - **OS**: Linux (tested on Ubuntu 22.04 LTS / x86_64)
-- **GPU**: NVIDIA GPU with >= 16 GB VRAM (e.g., RTX 3090, A5000, A100, V100, or Colab T4/A100)
-- **Disk Space**: ~25 GB for WSI JPGs, ~5 GB for cached FP16 tile and slide embeddings
+- **GPU**: NVIDIA GPU with >= 12 GB VRAM (e.g., RTX 3090, A5000, A100, V100, or Colab T4/A100)
+- **Disk Space**: 386 GB for original WSI JPGs, ~5 GB for cached FP16 tile and slide embeddings
 
 ### 1.2 Installation Options
 
@@ -25,14 +27,17 @@ This guide provides end-to-end instructions for reproducing the entire data cura
 python3 -m venv .env_path_agent
 source .env_path_agent/bin/activate
 
-# 2. Install PyTorch with your system's CUDA version (e.g., CUDA 12.4)
+# 2. Install PyTorch with your system's CUDA version (e.g., CUDA 12.4 was used for this task)
 pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
 
 # 3. Install core dependencies
 pip install -r requirements.txt
+
+# 4. Verify GPU access
+python -c "import torch; print('PyTorch:', torch.__version__, 'CUDA available:', torch.cuda.is_available(), 'Device:', torch.cuda.get_device_name(0))"
 ```
 
-#### Option B: Ultra-Fast Hermetic Install via `uv` (Recommended)
+#### Option B: Fast Install via `uv` (Recommended)
 ```bash
 # 1. Create the dedicated virtual environment with Python 3.10
 uv venv .env_path_agent --python /usr/bin/python3.10
@@ -71,7 +76,24 @@ uv pip install --python .env_path_agent/bin/python "https://github.com/Dao-AILab
 
 ## 2. Dataset Configuration & Canonical Paths
 
-The pipeline resolves the image directory via the `LUNG_DATA_DIR` environment variable, falling back to `./data/lung_data` or `~/lung_data`:
+### 2.1 Quickstart via Shared Precomputed Artifacts (`artifacts.tar.gz`)
+
+For rapid reproduction without downloading raw WSIs and running feature extraction, the precomputed artifact bundle `artifacts.tar.gz` is shared. It contains precomputed slide embeddings (`artifacts/features/`), curated patient cohorts (`artifacts/curated_patients.csv`), frozen zero-leakage splits for all 3 seeds (`artifacts/splits/`), and other generated artifacts.
+
+To unpack `artifacts.tar.gz`:
+
+```bash
+cd artifacts/
+# Unpack the tarball
+tar -xzvf /path/to/artifacts.tar.gz
+```
+
+*Verification*:
+Ensure that `artifacts/features/` contains `uni2_slide_*.pt`, `virchow2_slide_*.pt`, `gigapath_slide_*.pt`, `prism2_diag_slide.pt` and `artifacts/curated_patients.csv`. With this, "3. Phase 1 (Data Audit, Tiling & Feature Extraction)" can be skipped and "4. Phase 2 (Autonomous Agent Fusion Search)" can be run directly.
+
+### 2.2 Canonical Paths & Raw WSI Configuration
+
+The pipeline resolves the raw image directory via the `LUNG_DATA_DIR` environment variable, falling back to `./data/Lung_Pathology_Image_JPG` or `~/Lung_Pathology_Image_JPG`:
 ```bash
 # Export the path to your raw WSI JPG files:
 export LUNG_DATA_DIR="/path/to/your/Lung_Pathology_Image_JPG"
@@ -83,12 +105,12 @@ Directory Structure:
 - **Curated Metadata**: `artifacts/curated_patients.csv` (Audited 204-patient cohort)
 - **Frozen Split Partitions**: `artifacts/splits/splits_seed_{42,1337,2026}.json`
 - **Extracted Feature Caches**: `artifacts/features/` (Tile embeddings in FP16, slide vectors in FP32)
-- **Tiling QC Overlays**: `artifacts/tiling_qc/`
-- **Evaluation Figures**: `artifacts/figures/`
+- **Tiling QC Overlays**: `artifacts/tiling_qc/` (visualization of tiling)
+- **Evaluation Figures**: `artifacts/figures/` (visualization of results)
 
 ---
 
-## 3. Phase 1: Data Audit, Tiling & Foundation Feature Extraction
+## 3. Data Audit, Tiling & Foundation Feature Extraction (Phase 1)
 
 Convenience bash scripts execute each stage deterministically:
 
@@ -141,34 +163,7 @@ Extracts tile embeddings with model-specific normalizations and caches them in F
 ./scripts/run_all_phase1.sh
 ```
 
----
-
-## 4. Phase 2: Autonomous Agent Fusion Search
-
-### Step 2.1: 25-Trial Autonomous Search (Seed 42)
-Executes the autonomous agent exploring Early, Late, and Intermediate fusion architectures with 1.0-SE overfitting guardrails:
-```bash
-./scripts/run_phase2.sh 42
-```
-*Outputs*:
-- `artifacts/agent_decision_log_seed_42.json`: Auditable decision log conditioning proposals on fold performance.
-- `artifacts/agent_search_summary_seed_42.md`: Step-by-step reasoning summary.
-- `artifacts/phase2_comparison_table_seed_42.md`: 10-row baseline and fused model evaluation with 1,000-sample bootstrap CIs.
-
-### Step 2.2: Multi-Seed Repeatability Verification (Seeds 42, 1337, 2026)
-Executes independent end-to-end searches and evaluations across all 3 seeds with zero cross-seed contamination:
-```bash
-./scripts/run_all_phase2.sh
-```
-*Outputs*:
-- `artifacts/phase2_multi_seed_comparison.md`: Multi-seed evaluation reporting Mean ± SD.
-- `artifacts/phase2_multi_seed_comparison.json`: Machine-readable results.
-
----
-
-## 5. Phase 3: Multimodal Vision-Language Benchmarks & Evaluation Figures
-
-### Step 3.1: Prism2 Multimodal Feature Extraction
+### Step 1.5: Prism2 Multimodal Feature Extraction (for Quad-model fusion only)
 Extracts Perceiver Resampler and Phi-3 VLM diagnostic embeddings from cached Virchow2 tile representations:
 ```bash
 # Extract Prism2 Base (2560-d), Latents Mean (2560-d), and VLM Diagnostic (3072-d):
@@ -176,17 +171,81 @@ Extracts Perceiver Resampler and Phi-3 VLM diagnostic embeddings from cached Vir
 ```
 *Outputs*: `artifacts/features/prism2_diag_slide.pt`, `artifacts/features/prism2_base_slide.pt`, `artifacts/features/prism2_latents_mean_slide.pt`
 
-### Step 3.2: Multimodal Vision-Language Representation Benchmark
-Evaluates Vision-Only Triad vs. Multimodal Quad-Model Late Fusion across all 3 seeds:
+---
+
+## 4. Autonomous Agent Fusion Search (Phase 2)
+
+The search engine supports 5 generations of autonomous agents (`v1` to `v5`):
+- **`v1` (Sequential Agent)**: Fixed sequential exploration (T01–T12) across Early/Late/Intermediate followed by greedy parameter exploitation (T13–T25) under paired 1.0-SE guardrails.
+- **`v2` (Exploitation Agent)**: Representation-capacity-first search prioritizing multi-resolution concat `[mean; max]` pooling before parameter exploitation.
+- **`v3` (Hierarchical Agent)**: Decoupled 3-stage search (Stage 1: pooling isolation -> Stage 2: fusion topology exploration -> Stage 3: 15-fold cross-seed stability utility selection).
+- **`v4` (Autonomous Agent - Default Champion)**: Hypothesis-driven search conditioned on complete trial history, domain pathology insights, and paired 1.0-SE guardrail early stopping.
+- **`v5` (Unified Agent)**: Unified statistical pooling screen -> closed-loop autonomous reasoning -> 15-fold stability gating.
+
+### Step 4.1: Running Agent Search for Tri-Model and Quad-Model Fusion
+
+The following commands run the autonomous search for any agent type (`v1` to `v5`, e.g., champion `v4`) for either **Tri-Model Vision Fusion** (`UNI2` + `Virchow2` + `Prov-GigaPath`), **Multimodal Quad-Model Fusion** (+ `Prism2 VLM`), or **Both**:
+
+#### A. Tri-Model Vision Fusion Search:
 ```bash
-# Run Vision-Only and Multimodal benchmarks across all 3 seeds:
+# Run 25-trial autonomous agent search (e.g. v4) on Tri-Model vision streams (Seed 42):
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality tri --seed 42
+```
+
+#### B. Quad-Model (+ Prism2 VLM) Fusion Search:
+```bash
+# Run agent search evaluating both Tri-Model and Quad-Model (+ Prism2 VLM):
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality quad --seed 42
+```
+
+#### C. Full Comparison (Both tri-model and quad-model):
+```bash
+# Evaluate Tri-Model and Quad-Model side-by-side with 1,000 bootstrap CIs (Seed 42):
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality both --seed 42
+```
+
+*Outputs*:
+- `artifacts/results/agent_decision_log_seed_42.json`: Auditable decision log conditioning proposals on fold performance.
+- `artifacts/results/agent_search_summary_seed_42.md`: Step-by-step hypothesis, reasoning, and adoption summary.
+- `artifacts/results/phase2_comparison_table_seed_42.md`: Baseline vs. Tri-Model & Quad-Model champion comparison table with 1,000-sample bootstrap 95% CIs.
+
+### Step 4.2: Multi-Seed Repeatability Verification (Seeds 42, 1337, 2026)
+Executes independent end-to-end searches and evaluations across all 3 seeds with zero cross-seed contamination:
+```bash
+# Run full 3-seed evaluation for any agent version (v1 to v5, say v4) across both modalities:
+.env_path_agent/bin/python scripts/05_run_phase2_fusion_agent.py --agent-version v4 --modality both --all-seeds
+```
+*Outputs*:
+- `artifacts/results/phase2_multi_seed_comparison.md`: Multi-seed evaluation reporting Mean ± SD.
+- `artifacts/results/phase2_multi_seed_comparison.json`: Machine-readable results.
+
+Convenience shell wrappers (supports positional or flagged arguments: `--seed`, `--agent`, `--output-dir`):
+```bash
+# Single-seed execution (default: seed 42, agent v4, output: artifacts/results):
+./scripts/run_phase2.sh
+# Single-seed execution with options (e.g. agent v4, seed 1337):
+./scripts/run_phase2.sh --seed 1337 --agent v4 --output-dir artifacts/results/seed1337_v4
+# Example with short options (e.g. agent v4):
+./scripts/run_phase2.sh -s 1337 -a v4 -o artifacts/results/seed1337_v4
+
+# Full multi-seed execution across seeds 42, 1337, 2026 (default: agent v4, output: artifacts/results):
+./scripts/run_all_phase2.sh
+# Full multi-seed execution with options (e.g. agent v4, output: artifacts/results/all_seeds_v4):
+./scripts/run_all_phase2.sh --agent v4 --output-dir artifacts/results/all_seeds_v4
+# Example with short options (e.g. agent v4):
+./scripts/run_all_phase2.sh -a v4 -o artifacts/results/all_seeds_v4
+```
+
+### Step 4.3: Multimodal Vision-Language Representation Benchmark (Optional)
+Evaluates Triad vs. Quad-Model Fusion across all 3 seeds:
+```bash
 .env_path_agent/bin/python scripts/compare_prism2_representations.py --mode both
 ```
-*Output*: `artifacts/prism2_benchmark_3seeds.json`
+*Output*: `artifacts/results/prism2_benchmark_3seeds.json`
 
 ---
 
-## 6. Main Benchmark Reproduction
+## 5. Main Benchmark Reproduction
 
 Runs the master evaluation across all 3 seeds, reproducing the main results tables:
 
@@ -195,10 +254,8 @@ OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
 .env_path_agent/bin/python scripts/eval_3seeds_comparison.py --mode both
 ```
 
----
 
-
-### 6.1: Ablation Study of Agent Search Architectures
+### 5.1: Ablation Study of Agent Search Architectures
 
 To evaluate the comparative impact of different autonomous search paradigms, run the 5-paradigm agent architecture ablation study:
 
@@ -207,10 +264,12 @@ OMP_NUM_THREADS=2 MKL_NUM_THREADS=2 OPENBLAS_NUM_THREADS=2 \
 .env_path_agent/bin/python scripts/run_agent_search_ablation.py --seeds 42 1337 2026
 ```
 
-### Step 6.2: Generate All Evaluation Figures & Failure Analysis Tables
-Renders publication-quality figures and per-class statistical tables:
+### Step 5.2: Generate All Evaluation Figures & Failure Analysis Tables
+Renders publication-quality figures and per-class statistical tables (reads directly from `artifacts/results/` by default, or an explicit results folder):
 ```bash
 .env_path_agent/bin/python scripts/generate_evaluation_figures.py
+# Or specify custom results and output directories:
+# .env_path_agent/bin/python scripts/generate_evaluation_figures.py --results-dir artifacts/results --output-dir artifacts/figures
 ```
 *Generated Deliverables in `artifacts/figures/`*:
 1. `confusion_matrix_quad_fusion.png`: Raw counts and row-normalized recall heatmap for Quad-Model Fusion on test cohort.
@@ -223,7 +282,7 @@ Renders publication-quality figures and per-class statistical tables:
 
 ---
 
-## 7. Repository Layout
+## 6. Repository Layout
 
 ```
 Pathology-FoundationModels-Fusion-Agent/
@@ -238,9 +297,10 @@ Pathology-FoundationModels-Fusion-Agent/
 │   ├── embeddings/          # Model-specific feature extraction logic
 │   └── eval/                # Bootstrap CIs, AUROC, and calibration metrics
 ├── scripts/
-│   ├── eval_3seeds_comparison.py       # Master evaluation script (Main results table)
-│   ├── run_agent_search_ablation.py    # 5-paradigm agent ablation runner
-│   └── generate_evaluation_figures.py  # ROC and other figures generator
+│   ├── 05_run_phase2_fusion_agent.py              # Autonomous agent search & multi-seed verification runner
+│   ├── eval_3seeds_comparison.py                  # Master evaluation script (Main results table)
+│   ├── run_agent_search_ablation.py               # 5-paradigm agent ablation runner
+│   └── generate_evaluation_figures.py             # ROC, confusion matrix, and other analysis generator
 ├── artifacts/
 │   ├── splits/              # Frozen, zero-leakage patient-level splits (seeds 42, 1337, 2026)
 │   ├── features/            # Precomputed FP16 slide-level embeddings
