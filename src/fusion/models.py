@@ -39,7 +39,7 @@ class EarlyFusionClassifier:
         is_train: bool = True
     ) -> np.ndarray:
         streams = []
-        for name in ["uni2", "virchow2", "gigapath"]:
+        for name in features.keys():
             x = features[name].copy()
             if self.l2_norm_per_stream:
                 norm = np.linalg.norm(x, axis=1, keepdims=True) + 1e-8
@@ -74,6 +74,7 @@ class EarlyFusionClassifier:
         )
         self.clf.fit(x_train, y)
         return self
+
 
     def predict_proba(self, features: Dict[str, np.ndarray], metadata: np.ndarray) -> np.ndarray:
         x_val = self._prepare_features(features, metadata, is_train=False)
@@ -110,7 +111,8 @@ class LateFusionClassifier:
         return x
 
     def fit(self, features: Dict[str, np.ndarray], metadata: np.ndarray, y: np.ndarray):
-        model_names = ["uni2", "virchow2", "gigapath"]
+        model_names = list(features.keys())
+        self.stream_names = model_names
         
         # Train individual stream base classifiers
         for name in model_names:
@@ -140,14 +142,14 @@ class LateFusionClassifier:
             y_onehot[np.arange(n_samples), y] = 1.0
 
             def loss_fn(weights):
-                w = np.array(weights).reshape(3, 1, 1)
-                p_comb = (w[0] * probas[0] + w[1] * probas[1] + w[2] * probas[2])
+                w = np.array(weights)
+                p_comb = sum(w[i] * probas[i] for i in range(len(model_names)))
                 p_comb = np.clip(p_comb, 1e-12, 1.0 - 1e-12)
                 return -np.mean(np.sum(y_onehot * np.log(p_comb), axis=1))
 
             cons = ({'type': 'eq', 'fun': lambda w: np.sum(w) - 1.0})
-            bounds = [(0.0, 1.0), (0.0, 1.0), (0.0, 1.0)]
-            init_w = [1.0 / 3.0, 1.0 / 3.0, 1.0 / 3.0]
+            bounds = [(0.0, 1.0) for _ in model_names]
+            init_w = [1.0 / len(model_names)] * len(model_names)
             res = minimize(loss_fn, init_w, method='SLSQP', bounds=bounds, constraints=cons)
             self.simplex_weights = res.x if res.success else np.array(init_w)
 
@@ -156,7 +158,8 @@ class LateFusionClassifier:
             skf = StratifiedKFold(n_splits=3, shuffle=True, random_state=self.random_state)
             oof_probas = [np.zeros((len(y), 7)) for _ in model_names]
 
-            for tr_idx, val_idx in skf.split(features["uni2"], y):
+            first_feat = next(iter(features.values()))
+            for tr_idx, val_idx in skf.split(first_feat, y):
                 for m_idx, name in enumerate(model_names):
                     x_m = self._prepare_stream_feature(features[name], metadata)
                     fold_clf = LogisticRegression(
@@ -186,15 +189,16 @@ class LateFusionClassifier:
 
         return self
 
+
     def predict_proba(self, features: Dict[str, np.ndarray], metadata: np.ndarray) -> np.ndarray:
-        model_names = ["uni2", "virchow2", "gigapath"]
+        model_names = getattr(self, "stream_names", list(features.keys()))
         probas = []
         for name in model_names:
             x_m = self._prepare_stream_feature(features[name], metadata)
             probas.append(self.stream_clfs[name].predict_proba(x_m))
 
         if self.strategy == "uniform":
-            return (probas[0] + probas[1] + probas[2]) / 3.0
+            return np.mean(probas, axis=0)
 
         elif self.strategy == "temperature":
             # Temperature-scaled logit voting
@@ -210,7 +214,7 @@ class LateFusionClassifier:
 
         elif self.strategy == "simplex":
             w = self.simplex_weights
-            return w[0] * probas[0] + w[1] * probas[1] + w[2] * probas[2]
+            return sum(w[i] * probas[i] for i in range(len(probas)))
 
         elif self.strategy == "stacking":
             stack_test = np.concatenate(probas, axis=1)
@@ -228,24 +232,20 @@ class GatedFusionModule(nn.Module):
     def __init__(self, in_dims: List[int], proj_dim: int = 64, num_classes: int = 7, use_meta: bool = True, dropout: float = 0.2):
         super().__init__()
         self.use_meta = use_meta
+        self.num_streams = len(in_dims)
         self.projs = nn.ModuleList([nn.Linear(dim, proj_dim, bias=False) for dim in in_dims])
-        self.gate = nn.Linear(proj_dim * 3, 3)
+        self.gate = nn.Linear(proj_dim * self.num_streams, self.num_streams)
         self.dropout = nn.Dropout(dropout)
         meta_dim = 2 if use_meta else 0
         self.head = nn.Linear(proj_dim + meta_dim, num_classes)
 
     def forward(self, xs: List[torch.Tensor], meta: Optional[torch.Tensor] = None) -> torch.Tensor:
-        # xs: list of 3 tensors [B, D_m]
-        projected = [proj(x) for proj, x in zip(self.projs, xs)] # 3 x [B, proj_dim]
-        proj_cat = torch.cat(projected, dim=-1)                   # [B, proj_dim * 3]
-        gates = torch.softmax(self.gate(proj_cat), dim=-1)        # [B, 3]
+        projected = [proj(x) for proj, x in zip(self.projs, xs)]
+        proj_cat = torch.cat(projected, dim=-1)
+        gates = torch.softmax(self.gate(proj_cat), dim=-1)
 
         # Weighted combination: \sum_m alpha_m * h_m
-        fused = (
-            gates[:, 0:1] * projected[0] +
-            gates[:, 1:2] * projected[1] +
-            gates[:, 2:3] * projected[2]
-        )
+        fused = sum(gates[:, i:i+1] * projected[i] for i in range(self.num_streams))
         fused = self.dropout(fused)
         if self.use_meta and meta is not None:
             fused = torch.cat([fused, meta], dim=-1)
@@ -309,7 +309,7 @@ class IntermediateFusionClassifier:
         is_train: bool = True
     ) -> Tuple[List[torch.Tensor], torch.Tensor]:
         xs = []
-        for name in ["uni2", "virchow2", "gigapath"]:
+        for name in features.keys():
             x = features[name].copy()
             if self.pca_per_stream is not None:
                 if is_train:
@@ -354,6 +354,7 @@ class IntermediateFusionClassifier:
             optimizer.step()
 
         return self
+
 
     def predict_proba(self, features: Dict[str, np.ndarray], metadata: np.ndarray) -> np.ndarray:
         self.module.eval()
